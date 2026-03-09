@@ -51,7 +51,11 @@
               "components/cards",
               "components/forms",
               "components/navigation",
-              "components/popup"
+              "components/popup",
+              "components/composition",
+              "components/feature-box",
+              "components/story",
+              "components/bg-video"
             ]
           },
           {

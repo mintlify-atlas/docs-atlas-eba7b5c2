@@ -1,0 +1,255 @@
+---
+title: Feature Box Component
+description: Feature boxes with gradient icons and hover effects for showcasing key benefits
+---
+
+# Feature Box Component
+
+The feature box component displays key product features with gradient icons, centered text, and subtle hover animations. It's used in the Features section to highlight the four main benefits of the tour experience.
+
+## Overview
+
+The feature box (`.feature-box`) provides:
+- Semi-transparent white background
+- Large gradient-colored icon
+- Centered text layout
+- Lift-on-hover animation
+- Consistent shadow and border radius
+
+## HTML Structure
+
+```html index.html:95
+<div class="col-1-of-4">
+  <div class="feature-box">
+    <i class="feature-box__icon icon-basic-world"></i>
+    <h3 class="heading-tertiary u-margin-bottom-small">Explore the world</h3>
+    <p class="feature-box__text">
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam, ipsum sapiente aspernatur.
+    </p>
+  </div>
+</div>
+```
+
+## Sass Implementation
+
+```scss sass/components/_feature-box.scss
+@use "../abstracts/variables" as *;
+
+.feature-box {
+  background-color: rgba($color-white, .8);
+  font-size: 1.5rem;
+  padding: 2.4rem;
+  text-align: center;
+  border-radius: 4px;
+  box-shadow: 0 1.5rem 4rem rgba($color-black, .15);
+  cursor: default;
+  transition: transform .3s ease;
+
+  &__icon {
+    font-size: 6rem;
+    margin-bottom: .5rem;
+    display: inline-block;
+    background-image: linear-gradient(to right, $color-primary-light, $color-primary-dark);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  &:hover {
+    transform: translateY(-6px) scale(1.03);
+  }
+}
+```
+
+## Component Elements
+
+### Container (`.feature-box`)
+
+**Styling:**
+- **Background**: Semi-transparent white (`rgba(white, .8)`) to blend with the skewed background
+- **Padding**: 2.4rem for comfortable spacing
+- **Border radius**: 4px for subtle rounded corners
+- **Box shadow**: Soft shadow for depth
+- **Text align**: Center for icon and text
+- **Cursor**: Default (not clickable)
+- **Transition**: 0.3s ease transform for smooth hover
+
+### Icon (`.feature-box__icon`)
+
+**Styling:**
+- **Size**: 6rem (large, prominent icon)
+- **Margin**: 0.5rem bottom spacing
+- **Display**: Inline-block for proper sizing
+- **Gradient effect**: Linear gradient from light to dark green
+
+**Gradient Text Technique:**
+```scss
+background-image: linear-gradient(to right, $color-primary-light, $color-primary-dark);
+-webkit-background-clip: text;
+background-clip: text;
+color: transparent;
+```
+
+This advanced CSS technique:
+1. Creates a gradient background
+2. Clips the background to the text shape
+3. Makes the text color transparent
+4. Result: The gradient shows through the text
+
+### Text (`.feature-box__text`)
+
+Standard paragraph text inheriting the component's center alignment and 1.5rem font size.
+
+## Four Feature Boxes
+
+The Features section displays four feature boxes in a row:
+
+```html index.html:94
+<div class="row">
+  <div class="col-1-of-4">
+    <div class="feature-box">
+      <i class="feature-box__icon icon-basic-world"></i>
+      <h3 class="heading-tertiary u-margin-bottom-small">Explore the world</h3>
+      <p class="feature-box__text">...</p>
+    </div>
+  </div>
+  
+  <div class="col-1-of-4">
+    <div class="feature-box">
+      <i class="feature-box__icon icon-basic-compass"></i>
+      <h3 class="heading-tertiary u-margin-bottom-small">Meet nature</h3>
+      <p class="feature-box__text">...</p>
+    </div>
+  </div>
+  
+  <div class="col-1-of-4">
+    <div class="feature-box">
+      <i class="feature-box__icon icon-basic-map"></i>
+      <h3 class="heading-tertiary u-margin-bottom-small">Find your way</h3>
+      <p class="feature-box__text">...</p>
+    </div>
+  </div>
+  
+  <div class="col-1-of-4">
+    <div class="feature-box">
+      <i class="feature-box__icon icon-basic-heart"></i>
+      <h3 class="heading-tertiary u-margin-bottom-small">Live a healthier life</h3>
+      <p class="feature-box__text">...</p>
+    </div>
+  </div>
+</div>
+```
+
+## Hover Effect
+
+When you hover over a feature box:
+
+```scss
+transform: translateY(-6px) scale(1.03);
+```
+
+- **Translate Y**: Lifts the box up by 6px
+- **Scale**: Slightly enlarges to 103% of original size
+- **Duration**: 0.3s ease transition
+
+This creates a subtle "lift and grow" effect that indicates interactivity without being too dramatic.
+
+## Icon Font
+
+The icons use a custom icon font (`icon-font.css`):
+- `icon-basic-world` - Globe icon
+- `icon-basic-compass` - Compass icon
+- `icon-basic-map` - Map icon
+- `icon-basic-heart` - Heart icon
+
+Each icon is displayed as a font character, allowing for easy scaling and the gradient color treatment.
+
+## Section Context
+
+The feature boxes are displayed on a **skewed background section**:
+
+```scss sass/components/pages/_home.scss
+.section-features {
+  background-image: linear-gradient(
+    to right bottom,
+    rgba($color-primary-light, .8),
+    rgba($color-primary-dark, .8)),
+    url(../../img/nat-4.jpg);
+  background-size: cover;
+  transform: skewY(-7deg);
+  margin-top: -10rem;
+  
+  & > * {
+    transform: skewY(7deg);
+  }
+}
+```
+
+The section is skewed -7deg, and all children (including feature boxes) are counter-skewed +7deg to appear straight.
+
+## Key CSS Techniques
+
+<CardGroup cols={2}>
+  <Card title="Gradient Text" icon="paintbrush">
+    Uses background-clip to create gradient-filled text/icons
+  </Card>
+  
+  <Card title="Semi-transparent BG" icon="droplet">
+    rgba() with alpha channel creates glass-like effect
+  </Card>
+  
+  <Card title="Transform Hover" icon="hand-pointer">
+    Combined translateY and scale for engaging interaction
+  </Card>
+  
+  <Card title="Icon Fonts" icon="icons">
+    Vector icons as fonts for scalability and styling flexibility
+  </Card>
+</CardGroup>
+
+## Browser Compatibility
+
+<Note>
+The `-webkit-background-clip: text` property requires vendor prefix for Safari and older browsers. The code includes both the prefixed and standard versions for maximum compatibility.
+</Note>
+
+## Design Principles
+
+- **Visual hierarchy**: Large icons draw attention first
+- **Readability**: Center alignment and generous padding
+- **Consistency**: All four boxes have identical styling
+- **Feedback**: Hover effect provides visual response
+- **Brand colors**: Gradient uses the primary color palette
+
+## Customization
+
+To customize feature boxes:
+
+**Change icon color:**
+```scss
+background-image: linear-gradient(to right, $your-light-color, $your-dark-color);
+```
+
+**Adjust hover lift:**
+```scss
+&:hover {
+  transform: translateY(-10px) scale(1.05); // More dramatic
+}
+```
+
+**Modify transparency:**
+```scss
+background-color: rgba($color-white, .9); // More opaque
+```
+
+## Related Components
+
+<CardGroup cols={2}>
+  <Card title="Cards" icon="square" href="/components/cards">
+    Similar hover transforms with scale and translate
+  </Card>
+  
+  <Card title="Typography" icon="text" href="/styling/typography">
+    Uses heading-tertiary for the feature titles
+  </Card>
+</CardGroup>

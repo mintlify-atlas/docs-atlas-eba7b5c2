@@ -1,0 +1,208 @@
+---
+title: Composition Component
+description: Image composition component with overlapping photos and hover effects
+---
+
+# Composition Component
+
+The composition component creates an artistic arrangement of overlapping images with sophisticated hover interactions. It's used in the About section to showcase nature photography with a dynamic, interactive layout.
+
+## Overview
+
+The composition component (`.composition`) arranges three images in an overlapping pattern with:
+- Absolute positioning for precise placement
+- Hover effects that highlight the focused image
+- Shadow and outline effects
+- Scale transformations on interaction
+
+## HTML Structure
+
+```html index.html:84
+<div class="composition">
+  <img src="img/nat-1.jpg" alt="Nature 1" class="composition__photo composition__photo--p1" />
+  <img src="img/nat-2.jpg" alt="Nature 2" class="composition__photo composition__photo--p2" />
+  <img src="img/nat-3.jpg" alt="Nature 3" class="composition__photo composition__photo--p3" />
+</div>
+```
+
+## Sass Implementation
+
+```scss sass/components/_composition.scss
+@use "../abstracts/variables" as *;
+
+.composition {
+  position: relative;
+
+  &__photo {
+    width: 55%;
+    box-shadow: 0 1.5rem 4rem rgba($color-black, .15);
+    border-radius: 0;
+    position: absolute;
+    transition: all .2s ease;
+    z-index: 10;
+    outline-offset: 2rem;
+
+    &--p1 {
+      left: 0;
+      top: -2rem;
+    }
+
+    &--p2 {
+      right: 0;
+      top: 2rem;
+    }
+
+    &--p3 {
+      left: 20%;
+      top: 10rem;
+    }
+
+    &:hover {
+      outline: 1.5rem solid $color-primary;
+      transform: scale(1.05) translateY(-.5rem);
+      box-shadow: 0 2.5rem 4rem rgba($color-black, .5);
+      z-index: 20;
+    }
+  }
+
+  &:hover &__photo:not(:hover) {
+    transform: scale(.95);
+  }
+}
+```
+
+## Component Structure
+
+### Container (`.composition`)
+The parent container uses relative positioning to establish a positioning context for the absolutely positioned photos.
+
+### Photos (`.composition__photo`)
+Each photo is absolutely positioned with:
+- **Width**: 55% of the container
+- **Box shadow**: Subtle shadow for depth
+- **Position**: Absolute for overlapping layout
+- **Transition**: Smooth 0.2s ease for all properties
+- **Z-index**: 10 (raised to 20 on hover)
+
+## Position Variants
+
+### Position 1 (`.composition__photo--p1`)
+```scss
+left: 0;
+top: -2rem;
+```
+Top-left corner, slightly raised above the container.
+
+### Position 2 (`.composition__photo--p2`)
+```scss
+right: 0;
+top: 2rem;
+```
+Top-right corner, slightly lower than position 1.
+
+### Position 3 (`.composition__photo--p3`)
+```scss
+left: 20%;
+top: 10rem;
+```
+Center-bottom, creating a triangular arrangement.
+
+## Hover Effects
+
+### Individual Photo Hover
+When you hover over a single photo:
+- **Outline**: 1.5rem solid green border appears
+- **Transform**: Scales to 105% and lifts up 0.5rem
+- **Shadow**: Intensifies to a darker, larger shadow
+- **Z-index**: Raised to 20, bringing it to the front
+
+```scss
+&:hover {
+  outline: 1.5rem solid $color-primary;
+  transform: scale(1.05) translateY(-.5rem);
+  box-shadow: 0 2.5rem 4rem rgba($color-black, .5);
+  z-index: 20;
+}
+```
+
+### Non-Hovered Photos
+When hovering over the composition, all photos NOT being hovered scale down to 95%:
+
+```scss
+&:hover &__photo:not(:hover) {
+  transform: scale(.95);
+}
+```
+
+This creates a focus effect where the hovered photo pops forward while others recede.
+
+## Visual Effect
+
+The composition creates a **photo collage effect**:
+1. Three images overlap at different depths
+2. Hovering highlights one image while dimming others
+3. The green outline matches the brand color
+4. Shadows create depth and hierarchy
+
+## Usage Context
+
+Located in the **About Section** of the landing page:
+
+```html index.html:69
+<div class="row">
+  <div class="col-1-of-2">
+    <!-- Text content -->
+  </div>
+  <div class="col-1-of-2">
+    <div class="composition">
+      <!-- Three overlapping photos -->
+    </div>
+  </div>
+</div>
+```
+
+## Key CSS Techniques
+
+<CardGroup cols={2}>
+  <Card title="Absolute Positioning" icon="arrows-up-down-left-right">
+    Each photo is positioned absolutely within the relative container
+  </Card>
+  
+  <Card title="Z-Index Layering" icon="layer-group">
+    Controls stacking order, changing on hover to bring focused image forward
+  </Card>
+  
+  <Card title="CSS Outline" icon="square">
+    Uses outline instead of border to avoid affecting layout dimensions
+  </Card>
+  
+  <Card title=":not() Selector" icon="filter">
+    Targets non-hovered siblings to create inverse hover effect
+  </Card>
+</CardGroup>
+
+## Design Considerations
+
+- **Outline offset**: Set to 2rem to create spacing between image and outline
+- **Smooth transitions**: 0.2s ease makes interactions feel polished
+- **Shadow progression**: Lighter shadow at rest, darker on hover for depth
+- **Scale consistency**: Small scale changes (95%-105%) prevent jarring motion
+
+## Accessibility
+
+While the composition is primarily decorative, ensure:
+- Images have descriptive `alt` text
+- The hover effect doesn't hide critical content
+- Color contrast of the outline is sufficient
+
+## Related Components
+
+<CardGroup cols={2}>
+  <Card title="Story Component" icon="quote-left" href="/components/story">
+    Another component using shape-outside and clip-path for images
+  </Card>
+  
+  <Card title="Cards" icon="square" href="/components/cards">
+    Similar hover effects with scale and shadow transformations
+  </Card>
+</CardGroup>

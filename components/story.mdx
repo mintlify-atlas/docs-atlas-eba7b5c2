@@ -1,0 +1,362 @@
+---
+title: Story Component
+description: Customer testimonial cards with circular image shapes and hover effects
+---
+
+# Story Component
+
+The story component displays customer testimonials with circular profile images, text content, and sophisticated hover effects. It's used in the Stories section to showcase customer experiences with the tour company.
+
+## Overview
+
+The story component (`.story`) features:
+- Skewed card design for visual interest
+- Circular profile image using CSS clip-path
+- Shape-outside for text wrapping
+- Hover effects revealing name captions
+- Image blur and zoom on interaction
+
+## HTML Structure
+
+```html index.html:255
+<div class="story">
+  <figure class="story__shape">
+    <img src="img/nat-8.jpg" alt="Person on a tour" class="story__img">
+    <figcaption class="story__caption">Mary Smith</figcaption>
+  </figure>
+  <div class="story__text">
+    <h3 class="heading-tertiary u-margin-bottom-small">I had the best week ever with my family</h3>
+    <p>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam, ipsum sapiente aspernatur 
+      libero repellat quis consequatur ducimus quam nisi exercitationem omnis earum qui.
+    </p>
+  </div>
+</div>
+```
+
+## Sass Implementation
+
+```scss sass/components/_story.scss
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+.story {
+  width: 75%;
+  margin: 0 auto;
+  box-shadow: 0 3rem 6rem rgba($color-black, .1);
+  background-color: rgba($color-white, .6);
+  border-radius: 4px;
+  padding: 6rem 6rem 6rem 9rem;
+  font-size: $default-font-size;
+  transform: skewX(-12deg);
+
+  &__shape {
+    width: 15rem;
+    height: 15rem;
+    float: left;
+    -webkit-shape-outside: circle(50% at 50% 50%);
+    shape-outside: circle(50% at 50% 50%);
+    -webkit-clip-path: circle(50% at 50% 50%);
+    clip-path: circle(50% at 50% 50%);
+    transform: translateX(-3rem) skewX(12deg);
+    position: relative;
+  }
+
+  &__img {
+    height: 100%;
+    transform: translateX(-4rem) scale(1.4);
+    backface-visibility: hidden;
+    transition: all .5s ease;
+  }
+
+  &__caption {
+    color: $color-white;
+    text-transform: uppercase;
+    font-size: 1.7rem;
+    text-align: center;
+    opacity: 0;
+    transition: all .5s ease;
+    backface-visibility: hidden;
+    
+    @include absCenter;
+  }
+  
+  &__text {
+    transform: skewX(12deg);
+  }
+
+  &:hover &__caption {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+
+  &:hover &__img {
+    transform: translateX(-4rem) scale(1);
+    filter: blur(3px) brightness(80%);
+  }
+}
+```
+
+## Component Structure
+
+### Container (`.story`)
+
+**Styling:**
+- **Width**: 75% of container, centered with `margin: 0 auto`
+- **Background**: Semi-transparent white (`rgba(white, .6)`)
+- **Padding**: 6rem on all sides, 9rem on left to accommodate image
+- **Shadow**: Large, soft shadow for depth
+- **Transform**: Skewed -12deg on X-axis for dynamic appearance
+
+### Shape Container (`.story__shape`)
+
+**Dimensions:**
+- **Size**: 15rem × 15rem square container
+- **Float**: Left to allow text wrapping
+
+**Advanced CSS Shaping:**
+```scss
+shape-outside: circle(50% at 50% 50%);
+clip-path: circle(50% at 50% 50%);
+```
+
+- **`shape-outside`**: Makes text wrap around a circular boundary
+- **`clip-path`**: Clips the image to a circular shape
+- **Result**: Perfect circular image with text flowing around it
+
+**Counter-skew:**
+```scss
+transform: translateX(-3rem) skewX(12deg);
+```
+Applies +12deg skew to counteract parent's -12deg, making image appear straight.
+
+### Image (`.story__img`)
+
+**Default state:**
+```scss
+height: 100%;
+transform: translateX(-4rem) scale(1.4);
+backface-visibility: hidden;
+transition: all .5s ease;
+```
+
+- Scaled to 140% and shifted left for better framing
+- `backface-visibility: hidden` prevents flicker during animation
+- 0.5s transition for smooth effects
+
+**Hover state:**
+```scss
+&:hover &__img {
+  transform: translateX(-4rem) scale(1);
+  filter: blur(3px) brightness(80%);
+}
+```
+
+- Zooms out to 100% scale
+- Applies 3px blur
+- Reduces brightness to 80%
+- Creates a "defocus" effect while caption appears
+
+### Caption (`.story__caption`)
+
+**Styling:**
+- **Position**: Absolutely centered using `absCenter` mixin
+- **Color**: White text
+- **Transform**: Uppercase
+- **Size**: 1.7rem
+- **Default opacity**: 0 (invisible)
+
+**Hover effect:**
+```scss
+&:hover &__caption {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
+```
+
+Fades in on hover, revealing the customer's name over the blurred image.
+
+### Text Content (`.story__text`)
+
+**Counter-skew:**
+```scss
+transform: skewX(12deg);
+```
+
+Applies +12deg to counteract parent's -12deg, making text appear straight.
+
+## Advanced CSS Techniques
+
+<CardGroup cols={2}>
+  <Card title="shape-outside" icon="circle">
+    Makes inline text wrap around the circular image shape
+  </Card>
+  
+  <Card title="clip-path" icon="scissors">
+    Clips the rectangular image to a perfect circle
+  </Card>
+  
+  <Card title="Transform Skew" icon="sliders">
+    Skews parent, then counter-skews children for dynamic layout
+  </Card>
+  
+  <Card title="Filter Effects" icon="wand-magic-sparkles">
+    Applies blur and brightness for hover interaction
+  </Card>
+</CardGroup>
+
+## The absCenter Mixin
+
+The caption uses the `absCenter` mixin for perfect centering:
+
+```scss sass/abstracts/_mixins.scss
+@mixin absCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);  
+}
+```
+
+This positions the element at the container's center point, then shifts it back by half its own width/height.
+
+## Hover Interaction Timeline
+
+<Steps>
+  <Step title="Initial State">
+    - Image is zoomed in (140%) and positioned left
+    - Caption is invisible (opacity: 0)
+    - Image is clear and full brightness
+  </Step>
+  
+  <Step title="User Hovers">
+    - Image zooms out to 100% scale
+    - Image blurs (3px) and darkens (80% brightness)
+    - Caption fades in (opacity: 0 → 1)
+    - All transitions occur over 0.5 seconds
+  </Step>
+  
+  <Step title="User Moves Away">
+    - All effects reverse
+    - Image returns to zoomed, clear state
+    - Caption fades out
+  </Step>
+</Steps>
+
+## Section Context
+
+The stories section includes a **background video** layer:
+
+```html index.html:240
+<section class="section-stories">
+  <div class="bg-video">
+    <video class="bg-video__content" autoplay muted loop>
+      <source src="img/video.mp4" type="video/mp4" />
+      <source src="img/video.webm" type="video/webm" />
+    </video>
+  </div>
+  
+  <!-- Story components here -->
+</section>
+```
+
+The semi-transparent story cards allow the background video to subtly show through.
+
+## Browser Compatibility
+
+<Warning>
+**Vendor Prefixes Required**
+
+The code includes `-webkit-` prefixes for `shape-outside` and `clip-path`:
+- Required for Safari and older browsers
+- Modern browsers support unprefixed versions
+- Both versions are included for maximum compatibility
+</Warning>
+
+## Two Story Cards
+
+The section displays two story cards with different customers:
+
+**Story 1 - Mary Smith:**
+```html
+<h3>I had the best week ever with my family</h3>
+```
+
+**Story 2 - John Doe:**
+```html
+<h3>WOW! My life is completely different now</h3>
+```
+
+Each uses the same component structure with different content and images.
+
+## Design Principles
+
+- **Skewed aesthetics**: Creates visual interest and movement
+- **Circular imagery**: Softens the design, focuses on faces
+- **Interactive revelation**: Caption appears on hover for discovery
+- **Text wrapping**: shape-outside creates natural text flow
+- **Blur effect**: Draws attention to the name when revealed
+
+## Performance Considerations
+
+<Tip>
+**Optimization Tips:**
+- `backface-visibility: hidden` prevents flickering during transforms
+- `will-change: transform` can be added for better animation performance
+- Blur filter is GPU-accelerated in modern browsers
+</Tip>
+
+## Accessibility
+
+**Semantic HTML:**
+- Uses `<figure>` and `<figcaption>` for proper image-caption relationship
+- Descriptive alt text on images
+- Heading hierarchy maintained with `h3`
+
+**Concerns:**
+- Caption is hidden by default; ensure critical information isn't only in caption
+- Test with screen readers to ensure caption is announced
+
+## Customization Examples
+
+**Change skew angle:**
+```scss
+transform: skewX(-15deg); // More dramatic skew
+
+&__shape, &__text {
+  transform: skewX(15deg); // Match counter-skew
+}
+```
+
+**Adjust circle size:**
+```scss
+&__shape {
+  width: 18rem;  // Larger circle
+  height: 18rem;
+  shape-outside: circle(50% at 50% 50%);
+  clip-path: circle(50% at 50% 50%);
+}
+```
+
+**Modify hover blur:**
+```scss
+&:hover &__img {
+  filter: blur(5px) brightness(70%); // Stronger effect
+}
+```
+
+## Related Components
+
+<CardGroup cols={2}>
+  <Card title="Background Video" icon="video" href="/components/bg-video">
+    Provides animated background for stories section
+  </Card>
+  
+  <Card title="Composition" icon="images" href="/components/composition">
+    Another component using advanced image techniques
+  </Card>
+  
+  <Card title="absCenter Mixin" icon="bullseye" href="/advanced/mixins">
+    Learn about the centering technique used for captions
+  </Card>
+</CardGroup>

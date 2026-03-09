@@ -1,0 +1,308 @@
+---
+title: Background Video Component
+description: Full-screen background video with low opacity overlay effect
+---
+
+# Background Video Component
+
+The background video component (`.bg-video`) creates an ambient, cinematic effect by playing a looping video behind content sections. It's used in the Stories section to add visual interest and movement to customer testimonials.
+
+## Overview
+
+The background video component provides:
+- Full-width, full-height video coverage
+- Low opacity (10%) for subtle ambient effect
+- Absolute positioning behind content
+- Auto-play, muted, looping video
+- Multiple source formats for browser compatibility
+
+## HTML Structure
+
+```html index.html:241
+<div class="bg-video">
+  <video class="bg-video__content" autoplay muted loop>
+    <source src="img/video.mp4" type="video/mp4" />
+    <source src="img/video.webm" type="video/webm" />
+    Your browser is not supported!
+  </video>
+</div>
+```
+
+## Sass Implementation
+
+```scss sass/components/_bg-video.scss
+.bg-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: -1;
+  opacity: .1;
+  overflow: hidden;
+
+  &__content {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+```
+
+## Component Structure
+
+### Container (`.bg-video`)
+
+**Positioning:**
+- **Position**: Absolute to remove from document flow
+- **Dimensions**: 100% width and height to fill parent section
+- **Top/Left**: 0 to align with section edges
+- **Z-index**: -1 to place behind all content
+- **Overflow**: Hidden to prevent video from extending beyond bounds
+
+**Visual Effect:**
+- **Opacity**: 0.1 (10%) creates a subtle, non-distracting background
+- The low opacity ensures text remains readable while adding atmosphere
+
+### Video Element (`.bg-video__content`)
+
+**Sizing:**
+- **Width/Height**: 100% to fill container
+- **object-fit**: Cover ensures video fills area without distortion
+
+**HTML Attributes:**
+- **autoplay**: Video starts playing automatically
+- **muted**: Required for autoplay to work in most browsers
+- **loop**: Video repeats indefinitely
+
+## Video Sources
+
+The component includes two video formats for maximum browser compatibility:
+
+```html
+<source src="img/video.mp4" type="video/mp4" />
+<source src="img/video.webm" type="video/webm" />
+```
+
+**Format Support:**
+- **MP4 (H.264)**: Supported by Safari, Chrome, Firefox, Edge
+- **WebM (VP8/VP9)**: Supported by Chrome, Firefox, Opera
+- Browsers automatically select the first format they support
+
+**Fallback Text:**
+```html
+Your browser is not supported!
+```
+Displayed only in browsers that don't support the `<video>` element (extremely rare).
+
+## object-fit: cover
+
+The `object-fit: cover` property is crucial for responsive video:
+
+```scss
+object-fit: cover;
+```
+
+**Behavior:**
+- Video maintains its aspect ratio
+- Fills the entire container
+- Crops edges if necessary to avoid letterboxing
+- Similar to `background-size: cover` for images
+
+## Section Implementation
+
+The background video is placed at the start of the Stories section:
+
+```html index.html:240
+<section class="section-stories" id="section-stories">
+  <div class="bg-video">
+    <video class="bg-video__content" autoplay muted loop>
+      <source src="img/video.mp4" type="video/mp4" />
+      <source src="img/video.webm" type="video/webm" />
+    </video>
+  </div>
+  
+  <div class="u-center-text u-margin-bottom-big">
+    <h2 class="heading-secondary">We make people genuinely happy</h2>
+  </div>
+  
+  <!-- Story cards here -->
+</section>
+```
+
+All other content in the section appears **on top** of the video due to the video's `z-index: -1`.
+
+## Why Opacity 0.1?
+
+The extremely low opacity (10%) is intentional:
+
+<CardGroup cols={2}>
+  <Card title="Readability" icon="book-open">
+    Ensures text remains highly legible over the video
+  </Card>
+  
+  <Card title="Subtlety" icon="eye-low-vision">
+    Creates ambiance without distraction
+  </Card>
+  
+  <Card title="Performance" icon="gauge">
+    Low visibility means slight performance impact is acceptable
+  </Card>
+  
+  <Card title="Atmosphere" icon="cloud">
+    Adds movement and life to static content
+  </Card>
+</CardGroup>
+
+At 10% opacity, the video provides gentle movement in the background without competing with the foreground content.
+
+## Browser Autoplay Policies
+
+<Warning>
+**Autoplay Restrictions**
+
+Modern browsers restrict autoplay to prevent annoying users:
+- **Muted required**: Videos must be muted to autoplay
+- **User interaction**: Some browsers require user interaction first
+- **Mobile**: Autoplay often disabled on mobile to save data
+
+The `muted` attribute is **essential** for autoplay to work reliably.
+</Warning>
+
+## Performance Considerations
+
+<Tip>
+**Optimization Tips:**
+
+1. **Compress videos**: Use efficient codecs and bitrates
+2. **Resolution**: Don't use 4K video for a 10% opacity background
+3. **Short loops**: Use short video clips that loop seamlessly
+4. **Lazy loading**: Consider loading video only when section is in viewport
+5. **Poster image**: Add a `poster` attribute for fallback
+
+Example with poster:
+```html
+<video poster="img/video-poster.jpg" autoplay muted loop>
+  <!-- sources -->
+</video>
+```
+</Tip>
+
+## Accessibility Considerations
+
+**Reduced Motion:**
+Users with vestibular disorders may be sensitive to motion. Consider adding:
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  .bg-video__content {
+    display: none;
+  }
+}
+```
+
+This respects the user's system preference for reduced motion.
+
+**Alternative:**
+Provide a static background image as fallback for users who prefer no motion.
+
+## CSS Properties Explained
+
+### position: absolute
+Removes the video from normal document flow and positions it relative to the nearest positioned ancestor (the section).
+
+### z-index: -1
+Places the video behind all other content. Positive z-index values or default stacking will appear in front.
+
+### overflow: hidden
+Prevents video from extending beyond container boundaries if aspect ratios don't match perfectly.
+
+### opacity: .1
+Makes the video 90% transparent, creating a subtle background effect.
+
+## Common Variations
+
+**Higher opacity for more prominence:**
+```scss
+opacity: .3; // More visible video
+```
+
+**Fixed background (doesn't scroll with content):**
+```scss
+position: fixed;
+```
+
+**Gradient overlay for better text contrast:**
+```scss
+.bg-video::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0,0,0,.3), rgba(0,0,0,.6));
+}
+```
+
+## Video Content Guidelines
+
+**Best practices for background videos:**
+- **Abstract motion**: Avoid specific actions or text in video
+- **Slow movement**: Fast motion is distracting
+- **Seamless loops**: Ensure start/end frames match for smooth looping
+- **No audio**: Always mute background videos
+- **Complementary**: Video should enhance, not dominate the content
+
+## Browser Support
+
+The background video technique is widely supported:
+
+| Feature | Support |
+|---------|---------|
+| `<video>` element | All modern browsers |
+| `autoplay` (muted) | Chrome, Firefox, Safari, Edge |
+| `object-fit: cover` | Chrome 32+, Firefox 36+, Safari 10+, Edge 16+ |
+| Multiple sources | All browsers with `<video>` support |
+
+For older browsers, provide a fallback background image.
+
+## Related Concepts
+
+<CardGroup cols={2}>
+  <Card title="Story Component" icon="quote-left" href="/components/story">
+    Displays content on top of the background video
+  </Card>
+  
+  <Card title="Animations" icon="sparkles" href="/styling/animations">
+    Other techniques for adding movement to the page
+  </Card>
+</CardGroup>
+
+## Complete Example
+
+Here's a complete section with background video:
+
+```html
+<section class="section-stories">
+  <!-- Background video layer -->
+  <div class="bg-video">
+    <video class="bg-video__content" autoplay muted loop poster="img/poster.jpg">
+      <source src="img/video.mp4" type="video/mp4" />
+      <source src="img/video.webm" type="video/webm" />
+      Your browser is not supported!
+    </video>
+  </div>
+  
+  <!-- Content layer (appears on top) -->
+  <div class="u-center-text u-margin-bottom-big">
+    <h2 class="heading-secondary">Section Title</h2>
+  </div>
+  
+  <div class="row">
+    <!-- Content here -->
+  </div>
+</section>
+```
+
+The section acts as the positioning context (relative positioning), the video fills it absolutely, and all other content appears on top due to natural stacking order and the video's negative z-index.
