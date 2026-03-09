@@ -1,0 +1,98 @@
+{
+  "projectType": "frontend",
+  "projectName": "Natours",
+  "projectDescription": "A modern CSS and Sass showcase featuring advanced animations, responsive design, and custom UI components for a fictional tour company.",
+  "theme": "palm",
+  "primaryColor": "#848c8e",
+  "lightColor": "#11161e",
+  "darkColor": "#cfd0d2",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "concepts/architecture",
+              "concepts/sass-structure",
+              "concepts/responsive-design"
+            ]
+          },
+          {
+            "group": "Components",
+            "pages": [
+              "components/overview",
+              "components/buttons",
+              "components/cards",
+              "components/forms",
+              "components/navigation",
+              "components/popup"
+            ]
+          },
+          {
+            "group": "Styling",
+            "pages": [
+              "styling/animations",
+              "styling/colors-variables",
+              "styling/typography",
+              "styling/utilities"
+            ]
+          },
+          {
+            "group": "Layout",
+            "pages": [
+              "layout/grid-system",
+              "layout/header-footer"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Advanced Topics",
+        "groups": [
+          {
+            "group": "Techniques",
+            "pages": [
+              "advanced/mixins",
+              "advanced/media-queries",
+              "advanced/css-animations"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Advanced CSS animations and transitions",
+    "Responsive design with Sass mixins",
+    "Modular Sass architecture (7-1 pattern)",
+    "Custom UI component library",
+    "CSS Grid and Flexbox layouts",
+    "Background video integration"
+  ],
+  "publicApiSurface": [
+    "@mixin clearfix",
+    "@mixin absCenter",
+    "@mixin respond($breakpoint)",
+    "$color-primary: #55C57A",
+    "$color-primary-light: #7ED56F",
+    "$color-primary-dark: #28B485",
+    "@keyframes moveInLeft",
+    "@keyframes moveInRight",
+    "@keyframes moveInBottom",
+    ".btn and variants",
+    ".card component",
+    ".form component",
+    ".navigation component",
+    ".popup component",
+    "Grid system classes"
+  ]
+}
