@@ -1,0 +1,767 @@
+---
+title: 'CSS Animations'
+description: 'Performant CSS animations with keyframes and transforms'
+icon: 'wand-magic-sparkles'
+---
+
+# CSS Animations
+
+Natours uses CSS animations to create smooth, performant entrance effects and micro-interactions. All animations follow best practices for performance by utilizing GPU-accelerated properties and avoiding expensive layout recalculations.
+
+## Animation Philosophy
+
+The project demonstrates professional animation techniques:
+
+<CardGroup cols={2}>
+  <Card title="GPU Acceleration" icon="microchip">
+    Only animate `transform` and `opacity` for 60fps performance
+  </Card>
+  
+  <Card title="Purposeful Motion" icon="bullseye">
+    Animations guide attention and provide visual feedback
+  </Card>
+  
+  <Card title="Timing Matters" icon="clock">
+    Carefully chosen durations and delays create rhythm
+  </Card>
+  
+  <Card title="Easing Functions" icon="chart-line">
+    Natural motion with appropriate timing functions
+  </Card>
+</CardGroup>
+
+---
+
+## Keyframe Animations
+
+All keyframe definitions are centralized in `sass/base/_animations.scss` for easy maintenance and reuse.
+
+### Move In Left
+
+Creates a smooth entrance from the left with a subtle bounce effect.
+
+```scss sass/base/_animations.scss
+@keyframes moveInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+
+  80% {
+    transform: translateX(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+```
+
+#### How It Works
+
+<Steps>
+  <Step title="Start invisible and offset">
+    At 0%, element is `opacity: 0` and positioned 100px to the left
+  </Step>
+  
+  <Step title="Overshoot at 80%">
+    Element moves past its final position by 10px, creating a bounce effect
+  </Step>
+  
+  <Step title="Settle into place">
+    At 100%, element is fully visible at its natural position
+  </Step>
+</Steps>
+
+<Note>
+The overshoot at 80% creates a more natural, playful animation than a linear movement would.
+</Note>
+
+### Move In Right
+
+Mirror of `moveInLeft`, creating entrance from the right.
+
+```scss sass/base/_animations.scss
+@keyframes moveInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+
+  80% {
+    transform: translateX(-10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+```
+
+#### Key Differences
+
+- Starts 100px to the **right** (`translateX(100px)` instead of `-100px`)
+- Overshoots to the **left** (`translateX(-10px)` instead of `10px`)
+- Same timing and opacity behavior
+
+### Move In Bottom
+
+Simple upward entrance without overshoot.
+
+```scss sass/base/_animations.scss
+@keyframes moveInBottom {
+  0% {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+```
+
+#### Why No Overshoot?
+
+This animation is simpler (only two keyframes) because:
+- Used for call-to-action buttons where subtlety is preferred
+- Shorter movement distance (32px vs 100px)
+- Vertical motion feels more natural without bounce
+
+<Tip>
+Smaller movements generally don't need overshoot effects - they can feel jarring.
+</Tip>
+
+---
+
+## Applying Animations
+
+Keyframes are applied to elements using the `animation` property. Let's see real examples from the project.
+
+### Heading Animation
+
+The main page heading uses both left and right animations for a dramatic entrance.
+
+```scss sass/base/_typography.scss
+.heading-primary {
+  color: $color-white;
+  text-transform: uppercase;
+  backface-visibility: hidden;
+  margin-bottom: 6rem;
+  
+  &--main {
+    display: block;
+    font-size: 6rem;
+    font-weight: 400;
+    letter-spacing: 3.5rem;
+    animation: moveInLeft 1s ease;
+  }
+  
+  &--sub {
+    display: block;
+    font-size: 2rem;
+    font-weight: 400;
+    letter-spacing: 1.75rem;
+    animation: moveInRight 1s ease;
+  }
+}
+```
+
+#### Animation Properties Explained
+
+<Tabs>
+  <Tab title="Duration">
+    **1s**
+    
+    The animation takes 1 second to complete
+    
+    ```scss
+    animation: moveInLeft 1s ease;
+    //                    ^
+    //                  duration
+    ```
+    
+    Timing guidelines:
+    - **0.2-0.5s:** Quick micro-interactions
+    - **0.5-1s:** Standard entrance animations
+    - **1-2s:** Dramatic, attention-grabbing effects
+    - **2s+:** Usually too slow, user frustration
+  </Tab>
+  
+  <Tab title="Timing Function">
+    **ease**
+    
+    Built-in easing function for natural motion
+    
+    ```scss
+    animation: moveInLeft 1s ease;
+    //                       ^
+    //                timing function
+    ```
+    
+    Common timing functions:
+    - `ease`: Slow start, fast middle, slow end (default)
+    - `ease-in`: Slow start, fast end
+    - `ease-out`: Fast start, slow end  
+    - `ease-in-out`: Very slow start and end
+    - `linear`: Constant speed (robotic)
+  </Tab>
+  
+  <Tab title="backface-visibility">
+    **hidden**
+    
+    Prevents flickering during animation
+    
+    ```scss
+    .heading-primary {
+      backface-visibility: hidden;
+    }
+    ```
+    
+    This CSS property:
+    - Hides the back face of 3D transformed elements
+    - Prevents subtle rendering bugs during animations
+    - Improves performance by telling browser element won't flip
+    - Should be on parent of animated elements
+  </Tab>
+</Tabs>
+
+### Visual Effect
+
+The heading creates a balanced, symmetrical entrance:
+
+```
+START:
+←―― "OUTDOORS"     (invisible, 100px left)
+         "is where life happens" ――→ (invisible, 100px right)
+
+ANIMATION:
+    ―→ "OUTDOORS" ←―
+    ―→ "is where life happens" ←―
+    
+END:
+         "OUTDOORS"         (centered, visible)
+    "is where life happens"  (centered, visible)
+```
+
+---
+
+## Button Animation
+
+The call-to-action button uses a delayed animation to appear after the heading.
+
+```scss sass/components/_button.scss
+.btn {
+  &--animated {
+    animation: moveInBottom .5s ease .75s;
+    animation-fill-mode: backwards;
+  }
+}
+```
+
+### Full Animation Syntax
+
+```scss
+animation: moveInBottom .5s ease .75s;
+//         │           │   │    │
+//         │           │   │    └─ delay (0.75s)
+//         │           │   └────── timing function
+//         │           └────────── duration (0.5s)
+//         └────────────────────── animation name
+```
+
+### Animation Delay
+
+<Steps>
+  <Step title="Page loads">
+    Button is immediately visible at starting position (100% opacity, no transform)
+  </Step>
+  
+  <Step title="0.75 second delay">
+    Nothing happens for 0.75s, giving the heading time to animate first
+  </Step>
+  
+  <Step title="Animation starts">
+    Button animates upward from 32px below its final position
+  </Step>
+  
+  <Step title="0.5s later">
+    Animation complete - button is in final position
+  </Step>
+</Steps>
+
+<Note>
+Total time until button reaches final position: **0.75s delay + 0.5s duration = 1.25s**
+</Note>
+
+### Animation Fill Mode
+
+```scss
+animation-fill-mode: backwards;
+```
+
+This property solves a timing problem:
+
+**Without `backwards`:**
+```
+0s ────────── 0.75s ─────── 1.25s
+│             │             │
+Button        Delay         Animation
+visible       ends,         complete
+at final      animation
+position      starts
+             (jumps to
+              start state)
+```
+
+**With `backwards`:**
+```
+0s ──────────────────────── 0.75s ─────── 1.25s
+│                           │             │
+Button                      Delay         Animation
+immediately                 ends,         complete
+takes 0%                    animation
+keyframe                    starts
+state (invisible,
+32px down)
+```
+
+<Tip>
+Always use `animation-fill-mode: backwards` with delayed animations to prevent elements from jumping.
+</Tip>
+
+---
+
+## GPU-Accelerated Properties
+
+Notice that all animations only use `transform` and `opacity`. This is **critical for performance**.
+
+### Performant Properties
+
+<CardGroup cols={2}>
+  <Card title="transform" icon="arrows-up-down-left-right">
+    **GPU Accelerated**
+    
+    `translate`, `scale`, `rotate`, `skew`
+    
+    Runs on GPU compositor thread
+  </Card>
+  
+  <Card title="opacity" icon="eye-low-vision">
+    **GPU Accelerated**
+    
+    Fading elements in/out
+    
+    Runs on GPU compositor thread
+  </Card>
+</CardGroup>
+
+### Properties to Avoid
+
+<Warning>
+**CPU-Intensive Properties**
+
+These cause layout recalculation and repainting:
+
+- `width`, `height` (triggers layout)
+- `top`, `left`, `right`, `bottom` (triggers layout)
+- `margin`, `padding` (triggers layout)
+- `background-position` (triggers repaint)
+- `color`, `background-color` (triggers repaint)
+</Warning>
+
+### Performance Comparison
+
+```scss
+// ❌ BAD - Causes layout recalculation
+@keyframes slideInBad {
+  from { left: -100px; }
+  to { left: 0; }
+}
+
+// ✅ GOOD - GPU accelerated
+@keyframes slideInGood {
+  from { transform: translateX(-100px); }
+  to { transform: translateX(0); }
+}
+```
+
+<Tip>
+The `translateX()` version is **100x faster** on most devices because it doesn't trigger layout recalculation.
+</Tip>
+
+---
+
+## Transform Deep Dive
+
+The `transform` property is the foundation of performant animations.
+
+### Translate Functions
+
+```scss
+// X-axis (horizontal)
+transform: translateX(100px);   // Move right 100px
+transform: translateX(-100px);  // Move left 100px
+
+// Y-axis (vertical)  
+transform: translateY(32px);    // Move down 32px
+transform: translateY(-32px);   // Move up 32px
+
+// Both axes
+transform: translate(-50%, -50%);  // Move left 50%, up 50%
+```
+
+### Why Transform is Fast
+
+<Steps>
+  <Step title="Browser paints element once">
+    Initial render creates a texture of the element
+  </Step>
+  
+  <Step title="Transform moves the texture">
+    GPU shifts the texture without re-rendering the element
+  </Step>
+  
+  <Step title="No layout recalculation">
+    Other elements aren't affected - no cascade of changes
+  </Step>
+  
+  <Step title="Runs on compositor thread">
+    Main JavaScript thread stays free and responsive
+  </Step>
+</Steps>
+
+### Combining Transforms
+
+```scss
+// Multiple transforms in one declaration
+transform: translateX(100px) rotate(45deg) scale(1.1);
+
+// Applied from RIGHT to LEFT:
+// 1. Scale to 110%
+// 2. Rotate 45 degrees
+// 3. Move right 100px
+```
+
+<Note>
+Transforms are applied from right to left, which affects the result when combining rotation with translation.
+</Note>
+
+---
+
+## Timing and Easing
+
+The right timing and easing make animations feel natural instead of robotic.
+
+### Duration Guidelines
+
+| Duration | Use Case | Example |
+|----------|----------|----------|
+| 0.1-0.2s | Instant feedback | Button active state |
+| 0.2-0.3s | Micro-interactions | Hover effects |
+| 0.3-0.5s | Quick transitions | Dropdown menus |
+| 0.5-1s | Standard animations | Entrance effects |
+| 1-2s | Dramatic effects | Hero section reveal |
+| 2s+ | Special occasions | Avoid generally |
+
+### Easing Explained
+
+<Tabs>
+  <Tab title="ease (default)">
+    **Slow → Fast → Slow**
+    
+    ```scss
+    animation: moveInLeft 1s ease;
+    ```
+    
+    Best for: Most animations, natural motion
+    
+    Cubic bezier equivalent: `cubic-bezier(0.25, 0.1, 0.25, 1)`
+  </Tab>
+  
+  <Tab title="ease-in">
+    **Slow → Fast**
+    
+    ```scss
+    animation: fadeOut 0.3s ease-in;
+    ```
+    
+    Best for: Elements exiting the screen
+    
+    Accelerates as it goes, like gravity
+  </Tab>
+  
+  <Tab title="ease-out">
+    **Fast → Slow**
+    
+    ```scss
+    animation: dropIn 0.5s ease-out;
+    ```
+    
+    Best for: Elements entering the screen
+    
+    Decelerates, like friction slowing an object
+  </Tab>
+  
+  <Tab title="ease-in-out">
+    **Slow → Fast → Slow (exaggerated)**
+    
+    ```scss
+    animation: slide 1s ease-in-out;
+    ```
+    
+    Best for: Looping animations, transitions
+    
+    More pronounced slow-down than `ease`
+  </Tab>
+  
+  <Tab title="linear">
+    **Constant speed**
+    
+    ```scss
+    animation: rotate 2s linear infinite;
+    ```
+    
+    Best for: Loading spinners, continuous rotations
+    
+    Feels robotic for most animations - use sparingly
+  </Tab>
+</Tabs>
+
+### Custom Cubic Bezier
+
+For complete control, define custom easing curves:
+
+```scss
+// Bouncy entrance
+animation: bounce 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+// Smooth, professional
+animation: smooth 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+```
+
+<Tip>
+Use [cubic-bezier.com](https://cubic-bezier.com) to visually design custom easing curves.
+</Tip>
+
+---
+
+## Animation Choreography
+
+Natours uses delays to create a sequence of animations that tell a story.
+
+### The Header Sequence
+
+```scss
+// 1. Main heading starts immediately
+.heading-primary--main {
+  animation: moveInLeft 1s ease;
+  // Starts: 0s
+  // Ends: 1s
+}
+
+// 2. Sub heading starts simultaneously
+.heading-primary--sub {
+  animation: moveInRight 1s ease;
+  // Starts: 0s  
+  // Ends: 1s
+}
+
+// 3. Button waits for headings, then animates
+.btn--animated {
+  animation: moveInBottom .5s ease .75s;
+  animation-fill-mode: backwards;
+  // Starts: 0.75s
+  // Ends: 1.25s
+}
+```
+
+### Timeline Visualization
+
+```
+0s        0.5s       0.75s      1s        1.25s
+│          │          │         │          │
+├─ Headings start     │         │          │
+│  (left & right)     │         │          │
+│                     │         │          │
+│                     ├─ Button │          │
+│                     │  starts │          │
+│                     │         │          │
+│                     │      Headings      │
+│                     │      complete      │
+│                     │                    │
+│                     │              Button complete
+│                     │                    │
+└─────────────────────┴────────────────────┴─────→
+```
+
+<Note>
+The button starts animating while the headings are still moving, creating overlapping motion that feels more dynamic than sequential animations.
+</Note>
+
+---
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Use transform, not position" icon="arrows-maximize">
+    Always use `translateX/Y` instead of `left/top` for movement
+  </Card>
+  
+  <Card title="Keep it subtle" icon="volume-low">
+    Animations should enhance, not distract. Less is more.
+  </Card>
+  
+  <Card title="Respect user preferences" icon="universal-access">
+    Honor `prefers-reduced-motion` for accessibility
+  </Card>
+  
+  <Card title="Test on real devices" icon="mobile">
+    What's smooth on desktop might stutter on mobile
+  </Card>
+  
+  <Card title="Use delays purposefully" icon="clock">
+    Choreograph animations to tell a story
+  </Card>
+  
+  <Card title="Add backface-visibility" icon="eye-slash">
+    Prevent flickering with `backface-visibility: hidden`
+  </Card>
+</CardGroup>
+
+---
+
+## Accessibility Considerations
+
+Some users find animations disorienting or distracting.
+
+### Respecting User Preferences
+
+```scss
+// Disable animations for users who prefer reduced motion
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+```
+
+<Note>
+This media query respects the "Reduce motion" accessibility setting in operating systems.
+</Note>
+
+### Guidelines
+
+- **Avoid flashing:** No rapid on/off animations that could trigger seizures
+- **Provide controls:** For looping animations, offer pause buttons
+- **Don't rely on animation alone:** Motion shouldn't be the only way to convey information
+- **Keep it short:** Long animations frustrate users who see them repeatedly
+
+---
+
+## Common Pitfalls
+
+<Warning>
+**Animating width/height**
+
+This causes layout thrashing and poor performance:
+```scss
+// ❌ DON'T
+@keyframes expandBad {
+  from { width: 0; }
+  to { width: 300px; }
+}
+```
+
+Use `scaleX` instead:
+```scss
+// ✅ DO
+@keyframes expandGood {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+```
+</Warning>
+
+<Warning>
+**Forgetting vendor prefixes**
+
+While modern browsers support unprefixed animations, older ones need:
+```scss
+-webkit-backface-visibility: hidden;
+backface-visibility: hidden;
+```
+
+Use a tool like Autoprefixer to handle this automatically.
+</Warning>
+
+<Warning>
+**Too many simultaneous animations**
+
+Animating dozens of elements at once can cause jank. Stagger animations with delays:
+```scss
+.card:nth-child(1) { animation-delay: 0s; }
+.card:nth-child(2) { animation-delay: 0.1s; }
+.card:nth-child(3) { animation-delay: 0.2s; }
+```
+</Warning>
+
+---
+
+## Advanced Techniques
+
+### Multiple Animations
+
+Apply multiple keyframe animations to one element:
+
+```scss
+.element {
+  animation: 
+    fadeIn 0.5s ease,
+    slideUp 0.5s ease,
+    bounce 0.8s ease 0.5s;
+}
+```
+
+### Infinite Animations
+
+```scss
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.loading-indicator {
+  animation: pulse 2s ease infinite;
+}
+```
+
+### Animation Direction
+
+```scss
+.element {
+  animation: slideIn 1s ease;
+  animation-direction: reverse;  // Play animation backwards
+}
+```
+
+---
+
+## Related Topics
+
+<CardGroup cols={2}>
+  <Card title="Button Component" icon="hand-pointer" href="/components/buttons">
+    See how animations are applied to interactive elements
+  </Card>
+  
+  <Card title="Typography" icon="text" href="/styling/typography">
+    Learn about the heading styles that use these animations
+  </Card>
+</CardGroup>

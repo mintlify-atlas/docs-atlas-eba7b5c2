@@ -1,0 +1,643 @@
+---
+title: Forms
+description: Beautiful form inputs with floating labels and custom radio buttons
+---
+
+## Overview
+
+The Natours form component features elegant text inputs with floating labels and custom-styled radio buttons. Forms include focus states, validation indicators, and smooth transitions for a polished user experience.
+
+## Form Structure
+
+Complete booking form example from the project:
+
+```html index.html:293-329
+<form action="#" class="form">
+  <div class="u-margin-bottom-medium">
+    <h2 class="heading-secondary">Start booking now!</h2>
+  </div>
+
+  <div class="form__group">
+    <input type="text" class="form__input" 
+           placeholder="Full name" id="name" required>
+    <label for="name" class="form__label">Full name</label>
+  </div>
+
+  <div class="form__group">
+    <input type="email" class="form__input" 
+           placeholder="Email address" id="email" required>
+    <label for="email" class="form__label">Email address</label>
+  </div>
+
+  <div class="form__group u-margin-bottom-medium">
+    <div class="form__radio-group">
+      <input type="radio" class="form__radio-input" 
+             id="small" name="size">
+      <label for="small" class="form__radio-label">
+        <span class="form__radio-button"></span>
+        Small tour group
+      </label>
+    </div>
+    
+    <div class="form__radio-group">
+      <input type="radio" class="form__radio-input" 
+             id="large" name="size">
+      <label for="large" class="form__radio-label">
+        <span class="form__radio-button"></span>
+        Large tour group
+      </label>
+    </div>
+  </div>
+  
+  <div class="form__group">
+    <button type="submit" class="btn btn--green">
+      Next step &rarr;
+    </button>
+  </div>
+</form>
+```
+
+<Note>
+The label comes **after** the input in the HTML. This is crucial for the CSS sibling selector that creates the floating label effect.
+</Note>
+
+## Text Inputs
+
+### Input Styling
+
+```scss sass/components/_form.scss:9-35
+&__input {
+  font-size: 1.5rem;
+  font-family: inherit;
+  color: inherit;
+  padding: 1.5rem 2rem;
+  border-radius: 4px;
+  background-color: rgba($color-white, .5);
+  border: none;
+  border-bottom: 3px solid transparent;
+  width: 90%;
+  display: block;
+  transition: all .3s ease;
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 1rem 2rem rgba($color-black, .1);
+    border-bottom: 3px solid $color-primary;
+  }
+
+  &:focus:invalid {
+    border-bottom: 3px solid $color-secondary-dark;
+  }
+
+  &::-webkit-input-placeholder {
+    color: $color-grey-dark-2;
+  }
+}
+```
+
+### Input Features
+
+<Tabs>
+  <Tab title="Default State">
+    - Semi-transparent white background (`rgba(#FFF, .5)`)
+    - Transparent bottom border (3px)
+    - 90% width for consistent sizing
+    - Grey placeholder text
+  </Tab>
+  
+  <Tab title="Focus State">
+    - Removes default outline
+    - Adds subtle shadow for elevation
+    - Bottom border turns green (`$color-primary`)
+    - Visual feedback for active field
+  </Tab>
+  
+  <Tab title="Invalid State">
+    - Only appears when focused
+    - Bottom border turns orange-red (`$color-secondary-dark`)
+    - Uses HTML5 validation states
+    - Provides immediate visual feedback
+  </Tab>
+</Tabs>
+
+<Tip>
+**Font inheritance:** `font-family: inherit` and `color: inherit` ensure inputs match the surrounding text styling automatically.
+</Tip>
+
+## Floating Labels
+
+Labels float above the input when text is entered:
+
+```scss sass/components/_form.scss:37-50
+&__label {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-left: 2rem;
+  margin-top: .7rem;
+  display: block;
+  transition: all .3s ease;
+}
+
+&__input:placeholder-shown + &__label {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4rem);
+}
+```
+
+### How It Works
+
+<Steps>
+  <Step title="Initial State">
+    When input is empty (`:placeholder-shown` is true), label is:
+    - Hidden (`opacity: 0`, `visibility: hidden`)
+    - Moved up by 4rem (`translateY(-4rem)`)
+  </Step>
+  
+  <Step title="User Types">
+    As soon as user enters text, placeholder is no longer shown
+  </Step>
+  
+  <Step title="Label Appears">
+    CSS selector no longer matches, label animates to visible state:
+    - Opacity: 0 → 1
+    - Transform: -4rem → 0
+    - Transition smooths the animation (0.3s)
+  </Step>
+</Steps>
+
+<Note>
+**Adjacent Sibling Selector:** The `+` combinator selects the label that immediately follows the input: `.form__input:placeholder-shown + .form__label`
+
+This only works because the label comes after the input in the HTML.
+</Note>
+
+### Label Positioning
+
+```scss
+margin-left: 2rem;  // Aligns with input padding
+margin-top: .7rem;  // Space below input
+```
+
+The margins position the label just below and aligned with the input's text area.
+
+## Form Groups
+
+Form groups manage spacing between form elements:
+
+```scss sass/components/_form.scss:5-7
+&__group:not(:last-child) {
+  margin-bottom: 1rem;
+}
+```
+
+**Usage:** Applies spacing to all groups except the last one (submit button group).
+
+## Custom Radio Buttons
+
+Radio buttons are completely custom-styled, hiding the native input:
+
+### Radio Structure
+
+```html
+<div class="form__radio-group">
+  <input type="radio" class="form__radio-input" 
+         id="small" name="size">
+  <label for="small" class="form__radio-label">
+    <span class="form__radio-button"></span>
+    Small tour group
+  </label>
+</div>
+```
+
+### Radio Input (Hidden)
+
+```scss sass/components/_form.scss:57-59
+&__radio-input {
+  display: none;
+}
+```
+
+The native radio input is completely hidden. The custom visual is created with the label and span.
+
+### Radio Label
+
+```scss sass/components/_form.scss:61-66
+&__radio-label {
+  font-size: $default-font-size;
+  cursor: pointer;
+  position: relative;
+  padding-left: 4.5rem;
+}
+```
+
+- **Cursor pointer:** Shows it's clickable
+- **Position relative:** Allows absolute positioning of the custom button
+- **Padding-left 4.5rem:** Creates space for the custom radio circle
+
+### Custom Radio Button
+
+The visible circular indicator:
+
+```scss sass/components/_form.scss:68-90
+&__radio-button {
+  height: 3rem;
+  width: 3rem;
+  border: 5px solid $color-primary;
+  border-radius: 50%;
+  display: inline-block;
+  position: absolute;
+  left: 0;
+  top: -.4rem;
+
+  &::after {
+    content: "";
+    display: block;
+    height: 1.3rem;
+    width: 1.3rem;
+    border-radius: 50%;
+    background-color: $color-primary;
+    opacity: 0;
+    transition: opacity .2s ease;
+    
+    @include absCenter;
+  }
+}
+```
+
+### Radio Button Structure
+
+<CodeGroup>
+```scss Outer Circle
+// The visible ring
+height: 3rem;
+width: 3rem;
+border: 5px solid $color-primary;  // Green ring
+border-radius: 50%;                // Makes it circular
+```
+
+```scss Inner Circle (::after)
+// The filled indicator
+height: 1.3rem;
+width: 1.3rem;
+border-radius: 50%;
+background-color: $color-primary;
+opacity: 0;  // Hidden by default
+```
+</CodeGroup>
+
+### Radio Checked State
+
+```scss sass/components/_form.scss:92-94
+&__radio-input:checked ~ &__radio-label &__radio-button::after {
+  opacity: 1;
+}
+```
+
+<Accordion title="Understanding the Selector">
+  This complex selector breaks down as:
+  
+  1. `.form__radio-input:checked` - When radio is checked
+  2. `~` - General sibling combinator (any following sibling)
+  3. `.form__radio-label` - Finds the label
+  4. `.form__radio-button::after` - Targets the inner circle pseudo-element
+  
+  **Result:** When radio input is checked, the inner circle becomes visible.
+</Accordion>
+
+### Visual States
+
+<Steps>
+  <Step title="Unchecked">
+    - Outer circle visible (green border)
+    - Inner circle hidden (opacity: 0)
+  </Step>
+  
+  <Step title="User Clicks">
+    - Label click triggers the hidden input
+    - Input becomes `:checked`
+  </Step>
+  
+  <Step title="Checked">
+    - CSS selector matches
+    - Inner circle fades in (opacity: 1)
+    - Transition animates the change (0.2s)
+  </Step>
+</Steps>
+
+## Radio Button Positioning
+
+### Centering the Inner Circle
+
+Uses the `absCenter` mixin:
+
+```scss
+@include absCenter;
+
+// Expands to:
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+```
+
+This perfectly centers the inner filled circle within the outer ring.
+
+### Radio Group Layout
+
+```scss sass/components/_form.scss:52-55
+&__radio-group {
+  width: 49%;
+  display: inline-block;
+}
+```
+
+**Result:** Two radio buttons sit side-by-side, each taking ~49% width with a small gap.
+
+## Complete Form Validation
+
+### HTML5 Validation
+
+```html
+<input type="text" class="form__input" 
+       placeholder="Full name" id="name" required>
+```
+
+The `required` attribute provides native validation.
+
+### CSS Validation States
+
+```scss
+&__input:focus:invalid {
+  border-bottom: 3px solid $color-secondary-dark;
+}
+```
+
+<Tip>
+**Validation only on focus:** By combining `:focus:invalid`, validation styling only appears when the user is actively interacting with the field, preventing premature error states.
+</Tip>
+
+## Color Indicators
+
+<Tabs>
+  <Tab title="Valid Input">
+    ```scss
+    border-bottom: 3px solid $color-primary;
+    ```
+    **Color:** Green (#55C57A)
+    
+    **Meaning:** Field is focused and valid
+  </Tab>
+  
+  <Tab title="Invalid Input">
+    ```scss
+    border-bottom: 3px solid $color-secondary-dark;
+    ```
+    **Color:** Orange-red (#FF7730)
+    
+    **Meaning:** Field is focused but validation failed
+  </Tab>
+  
+  <Tab title="Default State">
+    ```scss
+    border-bottom: 3px solid transparent;
+    ```
+    **Color:** None (transparent)
+    
+    **Meaning:** Field is inactive
+  </Tab>
+</Tabs>
+
+## Accessibility Features
+
+### Proper Label Association
+
+```html
+<input type="text" class="form__input" id="name" required>
+<label for="name" class="form__label">Full name</label>
+```
+
+The `for` attribute connects the label to the input, allowing:
+- Screen readers to announce the label
+- Clicking the label focuses the input
+
+### Radio Button Accessibility
+
+```html
+<input type="radio" class="form__radio-input" 
+       id="small" name="size">
+<label for="small" class="form__radio-label">
+  <span class="form__radio-button"></span>
+  Small tour group
+</label>
+```
+
+- Hidden input still receives focus and can be keyboard-navigated
+- Label click triggers the input
+- Name attribute groups radio buttons together
+
+### Focus Management
+
+```scss
+&__input:focus {
+  outline: none;
+  box-shadow: 0 1rem 2rem rgba($color-black, .1);
+  border-bottom: 3px solid $color-primary;
+}
+```
+
+<Warning>
+Removing default outline (`outline: none`) requires providing alternative focus indicators. This form uses:
+- Shadow elevation
+- Colored bottom border
+
+Ensure these provide sufficient contrast for keyboard users.
+</Warning>
+
+## Real-World Usage
+
+### Booking Form Section
+
+```html index.html:289-333
+<section class="section-book" id="section-book">
+  <div class="row">
+    <div class="book">
+      <div class="book__form">
+        <form action="#" class="form">
+          <div class="u-margin-bottom-medium">
+            <h2 class="heading-secondary">Start booking now!</h2>
+          </div>
+
+          <div class="form__group">
+            <input type="text" class="form__input" 
+                   placeholder="Full name" id="name" required>
+            <label for="name" class="form__label">Full name</label>
+          </div>
+
+          <div class="form__group">
+            <input type="email" class="form__input" 
+                   placeholder="Email address" id="email" required>
+            <label for="email" class="form__label">Email address</label>
+          </div>
+
+          <div class="form__group u-margin-bottom-medium">
+            <div class="form__radio-group">
+              <input type="radio" class="form__radio-input" 
+                     id="small" name="size">
+              <label for="small" class="form__radio-label">
+                <span class="form__radio-button"></span>
+                Small tour group
+              </label>
+            </div>
+            
+            <div class="form__radio-group">
+              <input type="radio" class="form__radio-input" 
+                     id="large" name="size">
+              <label for="large" class="form__radio-label">
+                <span class="form__radio-button"></span>
+                Large tour group
+              </label>
+            </div>
+          </div>
+          
+          <div class="form__group">
+            <button type="submit" class="btn btn--green">
+              Next step &rarr;
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+```
+
+## Styling Details
+
+### Input Dimensions
+
+```scss
+padding: 1.5rem 2rem;     // Vertical: 15px, Horizontal: 20px
+width: 90%;               // Responsive width
+border-radius: 4px;       // Subtle rounding
+```
+
+### Background Transparency
+
+```scss
+background-color: rgba($color-white, .5);
+```
+
+The semi-transparent background allows the form's background image to show through slightly, creating visual depth.
+
+### Transition Timing
+
+```scss
+transition: all .3s ease;  // Inputs
+transition: opacity .2s ease;  // Radio button indicator
+```
+
+Faster transitions for radio buttons create snappier feedback; slightly slower for inputs feels more deliberate.
+
+## Browser Compatibility
+
+### Placeholder-shown Selector
+
+<Note>
+The `:placeholder-shown` pseudo-class has good modern browser support:
+- Chrome/Edge: Yes
+- Firefox: Yes
+- Safari: Yes
+- IE11: No (fallback needed)
+</Note>
+
+### Fallback for Older Browsers
+
+For IE11 support, consider JavaScript to toggle label visibility:
+
+```javascript
+const input = document.querySelector('.form__input');
+const label = input.nextElementSibling;
+
+input.addEventListener('input', function() {
+  if (this.value) {
+    label.classList.add('visible');
+  } else {
+    label.classList.remove('visible');
+  }
+});
+```
+
+## Customization Examples
+
+### Changing Input Width
+
+```scss
+.form__input {
+  width: 100%;  // Full width inputs
+}
+```
+
+### Different Color Scheme
+
+```scss
+.form__input:focus {
+  border-bottom: 3px solid $color-tertiary-light;  // Blue focus
+}
+
+.form__radio-button {
+  border: 5px solid $color-tertiary-light;  // Blue radio
+  
+  &::after {
+    background-color: $color-tertiary-light;
+  }
+}
+```
+
+### Adding More Input Types
+
+The input styles work for multiple input types:
+
+```html
+<!-- Textarea -->
+<div class="form__group">
+  <textarea class="form__input" id="message" 
+            placeholder="Your message" rows="5"></textarea>
+  <label for="message" class="form__label">Message</label>
+</div>
+
+<!-- Select -->
+<div class="form__group">
+  <select class="form__input" id="country">
+    <option value="">Choose country</option>
+    <option value="us">United States</option>
+    <option value="uk">United Kingdom</option>
+  </select>
+  <label for="country" class="form__label">Country</label>
+</div>
+```
+
+## Best Practices
+
+<Tip>
+**Placeholder vs Label:** The placeholder serves as an initial hint, while the floating label remains visible after the user starts typing. This prevents users from forgetting what information they're entering.
+</Tip>
+
+<Warning>
+**Validation Timing:** Only show invalid states when the user is actively focused on the field (`:focus:invalid`). Showing errors before the user has finished typing creates a frustrating experience.
+</Warning>
+
+<Note>
+**Radio Button Groups:** Always use the same `name` attribute for radio buttons that are part of the same group. This ensures only one can be selected at a time.
+</Note>
+
+## Summary
+
+The form component demonstrates:
+- **Floating labels** using `:placeholder-shown` and adjacent sibling selectors
+- **Custom radio buttons** with hidden native inputs and styled pseudo-elements
+- **Validation states** with color-coded borders
+- **Smooth transitions** for polished interactions
+- **Accessibility** through proper label associations
+- **BEM methodology** for clear component structure
+- **Progressive enhancement** with HTML5 validation

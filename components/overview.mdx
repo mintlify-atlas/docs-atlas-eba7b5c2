@@ -1,0 +1,235 @@
+---
+title: Components Overview
+description: Complete guide to all UI components in the Natours project
+---
+
+## Introduction
+
+The Natours project features a comprehensive set of reusable UI components built with modern CSS techniques including Sass, BEM methodology, and advanced CSS animations. All components follow a consistent design system with carefully crafted interactions and visual effects.
+
+## Component Architecture
+
+Components are organized in the `sass/components/` directory following a modular structure:
+
+```
+sass/components/
+├── _button.scss          # Button components and variants
+├── _card.scss            # Flip cards with 3D effects
+├── _form.scss            # Form inputs and controls
+├── _popup.scss           # Modal popup overlay
+├── _feature-box.scss     # Feature display boxes
+├── _story.scss           # User story cards
+├── _composition.scss     # Image composition
+└── layout/
+    └── _navigation.scss  # Hamburger navigation menu
+```
+
+## BEM Naming Convention
+
+All components follow the **BEM (Block Element Modifier)** methodology for CSS class naming:
+
+<Tabs>
+  <Tab title="Block">
+    The standalone component name:
+    ```scss
+    .card { }
+    .btn { }
+    .navigation { }
+    ```
+  </Tab>
+  <Tab title="Element">
+    Parts of a component, denoted with double underscores:
+    ```scss
+    .card__side { }
+    .card__picture { }
+    .navigation__button { }
+    ```
+  </Tab>
+  <Tab title="Modifier">
+    Variations of blocks or elements, denoted with double hyphens:
+    ```scss
+    .btn--white { }
+    .btn--green { }
+    .card__side--front { }
+    .card__side--back { }
+    ```
+  </Tab>
+</Tabs>
+
+## Available Components
+
+<CardGroup cols={2}>
+  <Card title="Buttons" icon="square" href="/components/buttons">
+    Primary, secondary, and text link buttons with hover animations and variants
+  </Card>
+  
+  <Card title="Cards" icon="square" href="/components/cards">
+    3D flip cards with front/back sides, perfect for showcasing tours and products
+  </Card>
+  
+  <Card title="Forms" icon="square" href="/components/forms">
+    Text inputs with floating labels and custom radio buttons with validation states
+  </Card>
+  
+  <Card title="Navigation" icon="square" href="/components/navigation">
+    Full-screen hamburger menu with animated icon and expanding background
+  </Card>
+  
+  <Card title="Popup" icon="square" href="/components/popup">
+    Modal overlay with smooth animations and multi-column text layout
+  </Card>
+</CardGroup>
+
+## Design System
+
+### Color Palette
+
+The component library uses a carefully selected color scheme defined in `sass/abstracts/_variables.scss`:
+
+<CodeGroup>
+```scss Primary Colors
+$color-primary: #55C57A;
+$color-primary-light: #7ED56F;
+$color-primary-dark: #28B485;
+```
+
+```scss Secondary Colors
+$color-secondary-light: #FFB900;
+$color-secondary-dark: #FF7730;
+```
+
+```scss Tertiary Colors
+$color-tertiary-light: #2998FF;
+$color-tertiary-dark: #5643FA;
+```
+
+```scss Neutral Colors
+$color-grey-light-1: #F7F7F7;
+$color-grey-light-2: #EEE;
+$color-grey-dark-1: #777;
+$color-grey-dark-2: #999;
+$color-grey-dark-3: #333;
+$color-white: #FFF;
+$color-black: #000;
+```
+</CodeGroup>
+
+### Typography
+
+```scss
+$default-font-size: 1.6rem;
+```
+
+All components use the Lato font family with weights ranging from 100 to 900.
+
+## Common Mixins
+
+Components leverage reusable Sass mixins defined in `sass/abstracts/_mixins.scss`:
+
+### Absolute Center
+
+Perfectly centers an element both horizontally and vertically:
+
+```scss
+@mixin absCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+```
+
+**Used in:** Cards (CTA positioning), Popup (content centering), Navigation (list centering)
+
+### Clearfix
+
+Clears floats within a container:
+
+```scss
+@mixin clearfix {
+  &::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+```
+
+## Component Features
+
+<Note>
+All components are built with **progressive enhancement** in mind, featuring:
+- Smooth CSS transitions and animations
+- Hover and focus states for better UX
+- Accessibility considerations (proper focus states, semantic HTML)
+- Responsive design patterns
+</Note>
+
+### Key Techniques Used
+
+<Accordion title="3D Transforms">
+  Used extensively in the card component for flip animations using `perspective`, `backface-visibility`, and `rotateY` transforms.
+</Accordion>
+
+<Accordion title="CSS Clip Path">
+  Creates unique shapes for card images and creates the signature polygonal clipping effect on pictures.
+</Accordion>
+
+<Accordion title="Gradient Overlays">
+  All components use `linear-gradient` and `radial-gradient` for rich visual effects, especially on backgrounds and text.
+</Accordion>
+
+<Accordion title="Custom Properties">
+  Extensive use of Sass variables enables easy theming and consistent styling across all components.
+</Accordion>
+
+<Accordion title="Pseudo-elements">
+  `::before` and `::after` pseudo-elements create visual effects without additional markup, like button hover effects and radio button indicators.
+</Accordion>
+
+## Getting Started
+
+<Steps>
+  <Step title="Choose a Component">
+    Browse the component pages to find the UI element you need for your project.
+  </Step>
+  
+  <Step title="Copy the HTML Structure">
+    Each component page includes the complete HTML markup with proper BEM class names.
+  </Step>
+  
+  <Step title="Include the Sass">
+    Import the component's Sass file into your main stylesheet:
+    ```scss
+    @use 'components/button';
+    @use 'components/card';
+    ```
+  </Step>
+  
+  <Step title="Customize if Needed">
+    Modify color variables or override specific styles to match your design system.
+  </Step>
+</Steps>
+
+## Browser Support
+
+<Warning>
+Some components use modern CSS features that may require vendor prefixes or have limited browser support:
+- CSS Grid
+- CSS Custom Properties
+- Clip-path
+- Backdrop-filter
+- CSS Transforms 3D
+</Warning>
+
+Make sure to test components in your target browsers and include appropriate prefixes using a tool like Autoprefixer.
+
+## Next Steps
+
+Explore individual component pages for detailed documentation, code examples, and implementation guidelines:
+
+- [Buttons](/components/buttons) - Learn about all button variants
+- [Cards](/components/cards) - Master the 3D flip card effect
+- [Forms](/components/forms) - Implement beautiful form controls
+- [Navigation](/components/navigation) - Build the hamburger menu
+- [Popup](/components/popup) - Add modal overlays

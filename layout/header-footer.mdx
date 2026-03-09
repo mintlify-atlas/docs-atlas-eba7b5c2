@@ -1,0 +1,672 @@
+---
+title: 'Header & Footer'
+description: 'Learn about the header and footer layout components in Natours'
+---
+
+## Overview
+
+The Natours website features a stunning hero header and a comprehensive footer, both implementing modern CSS techniques including gradient overlays, clip paths, and interactive link effects.
+
+<Note>
+The header component is defined in `sass/components/layout/_header.scss` and the footer in `sass/components/layout/_footer.scss`.
+</Note>
+
+## Header Component
+
+The header serves as the hero section of the website, featuring a full-width background image with a gradient overlay and a distinctive angled bottom edge created with CSS clip-path.
+
+### Header Structure
+
+```html
+<header class="header">
+  <div class="header__logo-box">
+    <img src="./img/logo-white.png" alt="Logo" class="header__logo">
+  </div>
+
+  <div class="header__text-box">
+    <h1 class="heading-primary">
+      <span class="heading-primary--main">Outdoors</span>
+      <span class="heading-primary--sub">is where life happens</span>
+    </h1>
+
+    <a href="#section-tours" class="btn btn--white btn--animated">Discover our tours</a>
+  </div>
+</header>
+```
+
+### Header Base Styles
+
+```scss
+.header {
+  height: 97vh;
+  background-image: linear-gradient(
+    to right bottom,
+    rgba($color-primary-light, 0.8),
+    rgba($color-primary-dark, 0.8)),
+  url('../img/hero.jpg');
+  background-size: cover;
+  background-position: top;
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% 75vh, 0 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 75vh, 0 100%);
+  position: relative;
+}
+```
+
+### Visual Description
+
+The header creates an immersive hero section with these visual characteristics:
+
+<CardGroup cols={2}>
+  <Card title="Height & Positioning" icon="ruler-vertical">
+    Takes up 97% of the viewport height (`97vh`), creating a full-screen hero effect while leaving a subtle hint of content below.
+  </Card>
+  <Card title="Gradient Overlay" icon="layer-group">
+    Uses a linear gradient from `#7ED56F` (light green) to `#28B485` (dark green) with 80% opacity, creating a vibrant teal overlay over the hero image.
+  </Card>
+  <Card title="Background Image" icon="image">
+    The hero image (`hero.jpg`) is set to `cover` ensuring it fills the entire header area, with `top` positioning to keep the most important part of the image visible.
+  </Card>
+  <Card title="Angled Bottom Edge" icon="scissors">
+    Uses `clip-path: polygon()` to create a diagonal cut at the bottom, starting at 75vh on the right and sloping down to 100% on the left.
+  </Card>
+</CardGroup>
+
+<Tip>
+The `clip-path` polygon coordinates work as follows:
+- `0 0` = top-left corner
+- `100% 0` = top-right corner
+- `100% 75vh` = right side at 75% viewport height
+- `0 100%` = bottom-left corner
+
+This creates the distinctive angled bottom edge.
+</Tip>
+
+### Header Logo Box
+
+```scss
+&__logo-box {
+  position: absolute;
+  top: 4rem;
+  left: 4rem;
+
+  .header__logo {
+    height: 3.6rem;
+  }
+}
+```
+
+The logo is positioned in the top-left corner:
+
+```html
+<div class="header__logo-box">
+  <img src="./img/logo-white.png" alt="Logo" class="header__logo">
+</div>
+```
+
+<Steps>
+  <Step title="Absolute Positioning">
+    The logo box uses `position: absolute` to remove it from the normal document flow, allowing it to sit on top of the header background.
+  </Step>
+  
+  <Step title="Corner Placement">
+    `top: 4rem` and `left: 4rem` place the logo 40px from the top and left edges, providing comfortable breathing room.
+  </Step>
+  
+  <Step title="Logo Sizing">
+    The logo image has a fixed height of `3.6rem` (36px) while width adjusts automatically to maintain aspect ratio.
+  </Step>
+</Steps>
+
+### Header Text Box
+
+```scss
+&__text-box {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+```
+
+The main heading and call-to-action button are centered in the header:
+
+```html
+<div class="header__text-box">
+  <h1 class="heading-primary">
+    <span class="heading-primary--main">Outdoors</span>
+    <span class="heading-primary--sub">is where life happens</span>
+  </h1>
+
+  <a href="#section-tours" class="btn btn--white btn--animated">Discover our tours</a>
+</div>
+```
+
+#### Perfect Centering Technique
+
+The text box uses a classic CSS centering technique:
+
+1. **Position**: Set to `absolute` to enable precise positioning
+2. **Initial Position**: `top: 40%` and `left: 50%` move the top-left corner of the element
+3. **Transform**: `translate(-50%, -50%)` shifts the element back by half its own width and height
+4. **Result**: Perfect horizontal and vertical centering
+
+<Note>
+The text box is positioned at `40%` from the top rather than `50%` to create a more visually appealing composition, following the rule of thirds in design.
+</Note>
+
+### Complete Header Example
+
+<CodeGroup>
+```html HTML Structure
+<header class="header">
+  <div class="header__logo-box">
+    <img src="./img/logo-white.png" alt="Logo" class="header__logo">
+  </div>
+
+  <div class="header__text-box">
+    <h1 class="heading-primary">
+      <span class="heading-primary--main">Outdoors</span>
+      <span class="heading-primary--sub">is where life happens</span>
+    </h1>
+
+    <a href="#section-tours" class="btn btn--white btn--animated">
+      Discover our tours
+    </a>
+  </div>
+</header>
+```
+
+```scss SCSS Styles
+.header {
+  height: 97vh;
+  background-image: linear-gradient(
+    to right bottom,
+    rgba($color-primary-light, 0.8),
+    rgba($color-primary-dark, 0.8)),
+  url('../img/hero.jpg');
+  background-size: cover;
+  background-position: top;
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% 75vh, 0 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 75vh, 0 100%);
+  position: relative;
+
+  &__logo-box {
+    position: absolute;
+    top: 4rem;
+    left: 4rem;
+
+    .header__logo {
+      height: 3.6rem;
+    }
+  }
+  
+  &__text-box {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+}
+```
+</CodeGroup>
+
+### Header Color Variables
+
+The gradient overlay uses color variables defined in `_variables.scss`:
+
+```scss
+$color-primary-light: #7ED56F;  // Light green
+$color-primary-dark: #28B485;   // Dark green
+```
+
+The gradient creates a smooth transition from light to dark green:
+
+```scss
+linear-gradient(
+  to right bottom,                          // Direction
+  rgba($color-primary-light, 0.8),         // Light green at 80% opacity
+  rgba($color-primary-dark, 0.8)           // Dark green at 80% opacity
+)
+```
+
+<Warning>
+Both `-webkit-clip-path` and `clip-path` are included for better browser compatibility. The `-webkit-` prefix supports older versions of Safari and Chrome.
+</Warning>
+
+## Footer Component
+
+The footer provides a dark, elegant close to the page with navigation links, copyright information, and interactive hover effects.
+
+### Footer Structure
+
+```html
+<footer class="footer">
+  <div class="footer__logo-box">
+    <img src="img/logo-green-2x.png" alt="Full logo" class="footer__logo" />
+  </div>
+
+  <div class="row">
+    <div class="col-1-of-2">
+      <div class="footer__navigation">
+        <ul class="footer__list">
+          <li class="footer__item"><a href="#" class="footer__link">Company</a></li>
+          <li class="footer__item"><a href="#" class="footer__link">Contact us</a></li>
+          <li class="footer__item"><a href="#" class="footer__link">Careers</a></li>
+          <li class="footer__item"><a href="#" class="footer__link">Privacy policy</a></li>
+          <li class="footer__item"><a href="#" class="footer__link">Terms</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-1-of-2">
+      <p class="footer__copyright">
+        Built by <a href="#" class="footer__link">Marcos Laurindo Ferreira</a> 
+        for his online course Advanced CSS and Sass. Copyright &copy; by 
+        Marcos Laurindo Ferreira.
+      </p>
+    </div>
+  </div>
+</footer>
+```
+
+### Footer Base Styles
+
+```scss
+.footer {
+  background-color: $color-grey-dark-3;
+  padding: 10rem 0;
+  font-size: 1.4rem;
+}
+```
+
+The footer establishes a dark foundation:
+- **Background**: `#333` (dark grey) creates a clear visual separation from the main content
+- **Padding**: `10rem` (100px) top and bottom provides generous spacing
+- **Font Size**: `1.4rem` (14px) for comfortable readability
+
+### Footer Logo
+
+```scss
+&__logo-box {
+  text-align: center;
+  margin-bottom: 8rem;
+}
+
+&__logo {
+  width: 15rem;
+  height: auto;
+}
+```
+
+The logo is prominently displayed at the top of the footer:
+
+```html
+<div class="footer__logo-box">
+  <img src="img/logo-green-2x.png" alt="Full logo" class="footer__logo" />
+</div>
+```
+
+<CardGroup cols={2}>
+  <Card title="Centered Alignment" icon="align-center">
+    `text-align: center` centers the logo horizontally within its container.
+  </Card>
+  <Card title="Spacing" icon="arrows-up-down">
+    `margin-bottom: 8rem` (80px) creates substantial space between the logo and footer content.
+  </Card>
+</CardGroup>
+
+### Footer Navigation
+
+```scss
+&__navigation {
+  border-top: 1px solid $color-grey-dark-1;
+  padding-top: 2rem;
+  display: inline-block;
+}
+
+&__list {
+  list-style: none;
+}
+
+&__item {
+  display: inline-block;
+
+  &:not(:last-child) {
+    margin-right: 1.5rem;
+  }
+}
+```
+
+The navigation creates a horizontal list of links:
+
+<Steps>
+  <Step title="Border Top">
+    A subtle `1px` border in `#777` (grey) separates the navigation from the logo area.
+  </Step>
+  
+  <Step title="Inline Display">
+    Both the navigation container and individual items use `inline-block` to create a horizontal layout.
+  </Step>
+  
+  <Step title="Item Spacing">
+    `margin-right: 1.5rem` adds 15px of space between navigation items, except for the last item.
+  </Step>
+</Steps>
+
+### Interactive Footer Links
+
+The footer links feature sophisticated hover effects:
+
+```scss
+&__link {
+  &:link,
+  &:visited {
+    background-color: $color-grey-dark-3;
+    color: $color-grey-light-1;
+    text-decoration: none;
+    text-transform: uppercase;
+    display: inline-block;
+    transition: all .2s ease;
+  }
+
+  &:hover,
+  &:active {
+    color: $color-primary;
+    box-shadow: 0 1rem 2rem rgba($color-black, .4);
+    transform: rotate(5deg) scale(1.3);
+  }
+}
+```
+
+#### Link States Breakdown
+
+<CodeGroup>
+```scss Default State
+&:link,
+&:visited {
+  background-color: $color-grey-dark-3;  // #333 dark grey
+  color: $color-grey-light-1;            // #F7F7F7 light grey
+  text-decoration: none;                 // Removes underline
+  text-transform: uppercase;             // Capitalizes text
+  display: inline-block;                 // Enables transforms
+  transition: all .2s ease;              // Smooth 200ms animation
+}
+```
+
+```scss Hover State
+&:hover,
+&:active {
+  color: $color-primary;                        // #55C57A green
+  box-shadow: 0 1rem 2rem rgba($color-black, .4); // Elevated shadow
+  transform: rotate(5deg) scale(1.3);           // Rotate + enlarge
+}
+```
+</CodeGroup>
+
+#### Hover Effect Visualization
+
+When a user hovers over a footer link, three simultaneous effects occur:
+
+1. **Color Change**: Text changes from light grey (`#F7F7F7`) to primary green (`#55C57A`)
+2. **Shadow**: A dark shadow appears (`0 10px 20px rgba(0,0,0,0.4)`) creating depth
+3. **Transform**: The link rotates 5 degrees clockwise and scales up to 130% of its original size
+
+<Tip>
+The `transition: all .2s ease` on the default state ensures all property changes animate smoothly over 200 milliseconds with an easing function.
+</Tip>
+
+### Footer Copyright
+
+```scss
+&__copyright {
+  border-top: 1px solid $color-grey-dark-1;
+  padding-top: 2rem;
+  width: 80%;
+  color: $color-grey-light-1;
+  float: right;
+}
+```
+
+The copyright section mirrors the navigation styling:
+
+```html
+<div class="col-1-of-2">
+  <p class="footer__copyright">
+    Built by <a href="https://marcotech.dev.br" class="footer__link">Marcos Laurindo Ferreira</a> 
+    for his online course <a href="#" class="footer__link">Advanced CSS and Sass</a>. 
+    Copyright &copy; by Marcos Laurindo Ferreira. You are 100% allowed to use this 
+    webpage for both personal and commercial use, but NOT to claim it as your own design.
+  </p>
+</div>
+```
+
+<Note>
+The copyright text is set to `width: 80%` and `float: right`, creating visual balance with the left-aligned navigation links.
+</Note>
+
+### Footer Layout with Grid
+
+The footer uses the Natours grid system to create a two-column layout:
+
+```html
+<div class="row">
+  <div class="col-1-of-2">
+    <!-- Navigation -->
+  </div>
+  <div class="col-1-of-2">
+    <!-- Copyright -->
+  </div>
+</div>
+```
+
+This creates a balanced layout:
+- **Left Column**: Navigation links in a horizontal list
+- **Right Column**: Copyright text and attribution
+
+### Complete Footer Example
+
+<CodeGroup>
+```html HTML Structure
+<footer class="footer">
+  <div class="footer__logo-box">
+    <img src="img/logo-green-2x.png" alt="Full logo" class="footer__logo" />
+  </div>
+
+  <div class="row">
+    <div class="col-1-of-2">
+      <div class="footer__navigation">
+        <ul class="footer__list">
+          <li class="footer__item">
+            <a href="#" class="footer__link">Company</a>
+          </li>
+          <li class="footer__item">
+            <a href="#" class="footer__link">Contact us</a>
+          </li>
+          <li class="footer__item">
+            <a href="#" class="footer__link">Careers</a>
+          </li>
+          <li class="footer__item">
+            <a href="#" class="footer__link">Privacy policy</a>
+          </li>
+          <li class="footer__item">
+            <a href="#" class="footer__link">Terms</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-1-of-2">
+      <p class="footer__copyright">
+        Built by <a href="#" class="footer__link">Author Name</a> 
+        for their online course. Copyright &copy; Year.
+      </p>
+    </div>
+  </div>
+</footer>
+```
+
+```scss SCSS Styles
+.footer {
+  background-color: $color-grey-dark-3;
+  padding: 10rem 0;
+  font-size: 1.4rem;
+
+  &__logo-box {
+    text-align: center;
+    margin-bottom: 8rem;
+  }
+
+  &__logo {
+    width: 15rem;
+    height: auto;
+  }
+
+  &__navigation {
+    border-top: 1px solid $color-grey-dark-1;
+    padding-top: 2rem;
+    display: inline-block;
+  }
+
+  &__list {
+    list-style: none;
+  }
+
+  &__item {
+    display: inline-block;
+
+    &:not(:last-child) {
+      margin-right: 1.5rem;
+    }
+  }
+
+  &__link {
+    &:link,
+    &:visited {
+      background-color: $color-grey-dark-3;
+      color: $color-grey-light-1;
+      text-decoration: none;
+      text-transform: uppercase;
+      display: inline-block;
+      transition: all .2s ease;
+    }
+
+    &:hover,
+    &:active {
+      color: $color-primary;
+      box-shadow: 0 1rem 2rem rgba($color-black, .4);
+      transform: rotate(5deg) scale(1.3);
+    }
+  }
+
+  &__copyright {
+    border-top: 1px solid $color-grey-dark-1;
+    padding-top: 2rem;
+    width: 80%;
+    color: $color-grey-light-1;
+    float: right;
+  }
+}
+```
+</CodeGroup>
+
+### Footer Color Variables
+
+The footer uses these color variables:
+
+```scss
+$color-grey-dark-3: #333;     // Footer background
+$color-grey-dark-1: #777;     // Border color
+$color-grey-light-1: #F7F7F7; // Text color
+$color-primary: #55C57A;      // Hover link color
+$color-black: #000;           // Shadow base color
+```
+
+## BEM Naming Convention
+
+Both the header and footer follow the BEM (Block Element Modifier) naming convention:
+
+<Steps>
+  <Step title="Block">
+    The main component: `.header` or `.footer`
+  </Step>
+  
+  <Step title="Element">
+    Parts of the component: `.header__logo-box`, `.footer__navigation`
+    
+    Elements are denoted with double underscores (`__`)
+  </Step>
+  
+  <Step title="Modifier">
+    Variations of blocks or elements (not shown in these examples)
+    
+    Modifiers are denoted with double hyphens (`--`)
+  </Step>
+</Steps>
+
+### BEM Benefits
+
+<CardGroup cols={3}>
+  <Card title="Clear Structure" icon="sitemap">
+    The naming convention makes the HTML structure immediately obvious from the class names.
+  </Card>
+  <Card title="No Nesting" icon="ban">
+    Avoids deep CSS selector nesting, improving specificity management and performance.
+  </Card>
+  <Card title="Reusability" icon="recycle">
+    Components are self-contained and can be easily moved or reused.
+  </Card>
+</CardGroup>
+
+## Responsive Considerations
+
+<Warning>
+For mobile devices, you may want to add responsive overrides:
+
+```scss
+// Header adjustments for mobile
+@media (max-width: 768px) {
+  .header {
+    clip-path: polygon(0 0, 100% 0, 100% 85vh, 0 100%);
+    
+    &__logo-box {
+      top: 2rem;
+      left: 2rem;
+    }
+  }
+}
+
+// Footer adjustments for mobile
+@media (max-width: 768px) {
+  .footer {
+    &__item {
+      display: block;
+      margin-bottom: 1rem;
+    }
+    
+    &__copyright {
+      width: 100%;
+      float: none;
+    }
+  }
+}
+```
+</Warning>
+
+## Key Takeaways
+
+<CardGroup cols={2}>
+  <Card title="Header" icon="heading">
+    - Uses `clip-path` for angled bottom edge
+    - Gradient overlay with `linear-gradient()`
+    - Absolute positioning for centering
+    - 97vh height for full-screen hero effect
+  </Card>
+  <Card title="Footer" icon="shoe-prints">
+    - Dark theme with `#333` background
+    - Interactive links with rotate + scale
+    - Grid system for two-column layout
+    - BEM naming convention throughout
+  </Card>
+</CardGroup>

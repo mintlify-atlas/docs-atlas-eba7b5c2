@@ -1,0 +1,561 @@
+---
+title: 'Responsive Media Queries'
+description: 'Desktop-first responsive design strategy with the respond mixin'
+icon: 'mobile-screen'
+---
+
+# Responsive Media Queries
+
+Natours implements a comprehensive responsive design system using a custom Sass mixin that provides consistent breakpoints across the entire project. This approach ensures the site looks perfect on every device from mobile phones to large desktop monitors.
+
+## The Respond Mixin
+
+All responsive behavior is controlled through the `respond` mixin, which abstracts media queries into semantic breakpoint names.
+
+### Complete Source Code
+
+```scss sass/abstracts/_mixins.scss
+// MEDIA QUERY MANAGER
+/* 
+0      - 600px:     Phone
+600px  - 900px:     Tablet portrait
+900px  - 1200px:    Tablet landscape
+1200px - 1800px:    is where our normal styles apply
+1800px - > :        Big desktop
+
+$breakpoint argument choices:
+- phone
+- tab-port
+- tab-land
+- big-desktop
+*/
+@mixin respond($breakpoint) {
+  @if $breakpoint == phone {
+    @media (max-width: 37.5em) { @content };      //600px
+  }
+  @if $breakpoint == tab-port {
+    @media (max-width: 56.25em) { @content };     //900px
+  }
+  @if $breakpoint == tab-land {
+    @media (max-width: 75em) { @content };        //1200px
+  }
+  @if $breakpoint == big-desktop {
+    @media (min-width: 112.5em) { @content };     //1800px
+  }
+}
+```
+
+<Note>
+The `@content` directive allows you to pass a block of CSS styles into the mixin.
+</Note>
+
+---
+
+## Breakpoint System
+
+Natours defines five distinct viewport ranges, each targeting specific device categories.
+
+### Breakpoint Ranges
+
+<Tabs>
+  <Tab title="Phone">
+    **0 - 600px**
+    
+    ```scss
+    @include respond(phone) {
+      // Styles for mobile devices
+    }
+    ```
+    
+    - **Media Query:** `max-width: 37.5em` (600px)
+    - **Target Devices:** iPhone SE, iPhone 12/13, Galaxy S21, etc.
+    - **Orientation:** Portrait mode
+    - **Common Changes:**
+      - Single column layouts
+      - Hamburger navigation
+      - Reduced font sizes
+      - Stacked elements
+  </Tab>
+  
+  <Tab title="Tablet Portrait">
+    **600px - 900px**
+    
+    ```scss
+    @include respond(tab-port) {
+      // Styles for tablets in portrait
+    }
+    ```
+    
+    - **Media Query:** `max-width: 56.25em` (900px)
+    - **Target Devices:** iPad Mini, iPad Air (portrait), small tablets
+    - **Orientation:** Portrait mode
+    - **Common Changes:**
+      - Two-column layouts
+      - Moderate spacing reduction
+      - Slightly smaller fonts
+  </Tab>
+  
+  <Tab title="Tablet Landscape">
+    **900px - 1200px**
+    
+    ```scss
+    @include respond(tab-land) {
+      // Styles for tablets in landscape
+    }
+    ```
+    
+    - **Media Query:** `max-width: 75em` (1200px)
+    - **Target Devices:** iPad (landscape), small laptops
+    - **Orientation:** Landscape mode
+    - **Common Changes:**
+      - Minor spacing adjustments
+      - Subtle font size reductions
+      - Grid column tweaks
+  </Tab>
+  
+  <Tab title="Desktop (Default)">
+    **1200px - 1800px**
+    
+    ```scss
+    .element {
+      // Default desktop styles
+      // No media query needed
+    }
+    ```
+    
+    - **Media Query:** None (base styles)
+    - **Target Devices:** Standard laptops, desktop monitors
+    - **Resolution:** 1920×1080, 1366×768
+    - **Note:** This is the default - write styles here first
+  </Tab>
+  
+  <Tab title="Large Desktop">
+    **1800px+**
+    
+    ```scss
+    @include respond(big-desktop) {
+      // Styles for large screens
+    }
+    ```
+    
+    - **Media Query:** `min-width: 112.5em` (1800px)
+    - **Target Devices:** 4K monitors, ultrawide displays, iMac
+    - **Resolution:** 2560×1440, 3840×2160
+    - **Common Changes:**
+      - Increased font sizes
+      - More generous spacing
+      - Enhanced readability
+  </Tab>
+</Tabs>
+
+---
+
+## Why Em Units?
+
+Media queries in Natours use `em` units instead of pixels for better accessibility and consistency.
+
+### The Conversion
+
+```scss
+// Browser default: 1em = 16px
+
+37.5em  × 16px = 600px   // phone
+56.25em × 16px = 900px   // tab-port  
+75em    × 16px = 1200px  // tab-land
+112.5em × 16px = 1800px  // big-desktop
+```
+
+### Why This Matters
+
+<CardGroup cols={2}>
+  <Card title="User Preferences" icon="user">
+    If a user increases their browser's default font size to 20px, breakpoints scale accordingly (37.5em × 20px = 750px instead of 600px)
+  </Card>
+  
+  <Card title="Browser Compatibility" icon="browser">
+    Some browsers don't properly handle `px` units in media queries when users zoom
+  </Card>
+  
+  <Card title="Accessibility" icon="universal-access">
+    Respects WCAG guidelines for user font size preferences
+  </Card>
+  
+  <Card title="Consistency" icon="check">
+    Works reliably across all browsers and devices
+  </Card>
+</CardGroup>
+
+<Warning>
+Never use `rem` units in media queries - they don't work in all browsers. Always use `em`.
+</Warning>
+
+---
+
+## Desktop-First Strategy
+
+Natours uses a **desktop-first** (max-width) approach, meaning you write default styles for desktop and override them for smaller screens.
+
+### How It Works
+
+<Steps>
+  <Step title="Write desktop styles first">
+    The base CSS targets 1200-1800px screens with no media queries
+  </Step>
+  
+  <Step title="Override for smaller screens">
+    Use `max-width` media queries to adjust for tablets and phones
+  </Step>
+  
+  <Step title="Enhance for large screens">
+    Use `min-width` for 1800px+ displays
+  </Step>
+</Steps>
+
+### Example Pattern
+
+```scss
+.heading-primary {
+  // Desktop styles (1200-1800px) - written first
+  font-size: 6rem;
+  letter-spacing: 3.5rem;
+  
+  // Tablet landscape (900-1200px)
+  @include respond(tab-land) {
+    font-size: 5rem;
+    letter-spacing: 2.5rem;
+  }
+  
+  // Tablet portrait (600-900px)
+  @include respond(tab-port) {
+    font-size: 4rem;
+    letter-spacing: 1.5rem;
+  }
+  
+  // Phone (0-600px)
+  @include respond(phone) {
+    font-size: 3rem;
+    letter-spacing: 1rem;
+  }
+  
+  // Large desktop (1800px+)
+  @include respond(big-desktop) {
+    font-size: 7rem;
+    letter-spacing: 4rem;
+  }
+}
+```
+
+<Tip>
+Order matters! Write breakpoints from largest to smallest (except `big-desktop` which uses `min-width`).
+</Tip>
+
+---
+
+## Real-World Implementation
+
+Let's examine how Natours uses responsive design in practice.
+
+### Base Font Size Scaling
+
+The most important responsive implementation is in the base styles:
+
+```scss sass/base/_base.scss
+html {
+  // Default: 62.5% of 16px = 10px
+  // This makes 1rem = 10px for easy calculation
+  font-size: 62.5%;
+  scroll-behavior: smooth;
+
+  // Tablet landscape: 56.25% of 16px = 9px
+  @include respond(tab-land) {
+    font-size: 56.25%;  // 1rem = 9px
+  }
+  
+  // Tablet portrait: 50% of 16px = 8px
+  @include respond(tab-port) {
+    font-size: 50%;  // 1rem = 8px
+  }
+
+  // Large desktop: 75% of 16px = 12px
+  @include respond(big-desktop) {
+    font-size: 75%;  // 1rem = 12px
+  }
+}
+```
+
+### Why This Approach is Powerful
+
+<Steps>
+  <Step title="Everything uses rem">
+    All spacing, fonts, and sizes throughout the project use `rem` units
+  </Step>
+  
+  <Step title="Change once, scale everywhere">
+    By adjusting the base font size, everything scales proportionally
+  </Step>
+  
+  <Step title="No repetitive media queries">
+    You don't need to add responsive rules to every single component
+  </Step>
+  
+  <Step title="Consistent scaling">
+    The entire design system maintains its proportions across devices
+  </Step>
+</Steps>
+
+### The Magic of Rem-Based Scaling
+
+```scss
+// Define once with rem
+.button {
+  padding: 1.5rem 4rem;  // 15px × 40px on desktop
+  font-size: 1.6rem;     // 16px on desktop
+}
+
+// On tablet portrait (font-size: 50%):
+// padding: 12px × 32px (automatically scaled)
+// font-size: 12.8px (automatically scaled)
+
+// On big desktop (font-size: 75%):
+// padding: 18px × 48px (automatically scaled)  
+// font-size: 19.2px (automatically scaled)
+```
+
+<Note>
+No additional CSS needed! The base font size change scales everything automatically.
+</Note>
+
+---
+
+## Common Responsive Patterns
+
+Here are the most frequent responsive adjustments in Natours:
+
+### 1. Font Size Adjustments
+
+```scss
+.heading-secondary {
+  font-size: 3.5rem;  // 35px desktop
+  
+  @include respond(tab-port) {
+    font-size: 3rem;  // 24px tablet (3 × 8px)
+  }
+  
+  @include respond(phone) {
+    font-size: 2.5rem;  // Adjust further if needed
+  }
+}
+```
+
+### 2. Spacing Reduction
+
+```scss
+.section-about {
+  padding: 25rem 0;  // Generous desktop spacing
+  
+  @include respond(tab-port) {
+    padding: 20rem 0;  // Reduce on tablets
+  }
+}
+```
+
+### 3. Layout Changes
+
+```scss
+.row {
+  max-width: 114rem;
+  
+  @include respond(tab-port) {
+    max-width: 50rem;  // Narrower on tablets
+    padding: 0 3rem;   // Add horizontal padding
+  }
+}
+```
+
+### 4. Hiding Elements
+
+```scss
+.decorative-element {
+  display: block;
+  
+  @include respond(phone) {
+    display: none;  // Hide on mobile to save space
+  }
+}
+```
+
+---
+
+## Media Query Order
+
+The order of media queries is critical for the cascade to work properly.
+
+### Correct Order (Desktop-First)
+
+```scss
+.element {
+  // 1. Default desktop styles (no media query)
+  font-size: 2rem;
+  
+  // 2. Tablet landscape (max-width: 1200px)
+  @include respond(tab-land) {
+    font-size: 1.8rem;
+  }
+  
+  // 3. Tablet portrait (max-width: 900px)
+  @include respond(tab-port) {
+    font-size: 1.6rem;
+  }
+  
+  // 4. Phone (max-width: 600px)
+  @include respond(phone) {
+    font-size: 1.4rem;
+  }
+  
+  // 5. Big desktop (min-width: 1800px)
+  @include respond(big-desktop) {
+    font-size: 2.4rem;
+  }
+}
+```
+
+<Warning>
+If you put `phone` before `tab-port`, the `tab-port` styles will override `phone` styles at small widths because both media queries are true!
+</Warning>
+
+### Why This Order Works
+
+1. **Desktop styles apply everywhere** (no media query = always active)
+2. **tab-land** overrides at 1200px and below
+3. **tab-port** overrides at 900px and below (and overrides tab-land)
+4. **phone** overrides at 600px and below (and overrides everything)
+5. **big-desktop** only applies at 1800px+, overriding desktop defaults
+
+---
+
+## Testing Responsive Design
+
+### Browser DevTools Breakpoints
+
+Test at these specific widths:
+
+<CardGroup cols={2}>
+  <Card title="599px" icon="mobile">
+    Maximum phone width - test `phone` breakpoint
+  </Card>
+  
+  <Card title="600px" icon="tablet">
+    Just above phone - test `tab-port` breakpoint
+  </Card>
+  
+  <Card title="899px" icon="tablet-screen-button">
+    Maximum tablet portrait
+  </Card>
+  
+  <Card title="900px" icon="laptop">
+    Just above tablet portrait - test `tab-land`
+  </Card>
+  
+  <Card title="1199px" icon="desktop">
+    Maximum tablet landscape
+  </Card>
+  
+  <Card title="1200px" icon="desktop">
+    Desktop default
+  </Card>
+  
+  <Card title="1799px" icon="tv">
+    Maximum desktop default
+  </Card>
+  
+  <Card title="1800px" icon="tv">
+    Big desktop threshold
+  </Card>
+</CardGroup>
+
+### Common Devices
+
+| Device | Width | Breakpoint |
+|--------|-------|------------|
+| iPhone SE | 375px | `phone` |
+| iPhone 12/13 | 390px | `phone` |
+| iPhone 12/13 Pro Max | 428px | `phone` |
+| iPad Mini | 768px | `tab-port` |
+| iPad Air | 820px | `tab-port` |
+| iPad Pro 11" | 834px | `tab-port` |
+| iPad Pro 12.9" | 1024px | `tab-land` |
+| MacBook Air | 1280px | default |
+| MacBook Pro 16" | 1728px | default |
+| iMac 27" | 2560px | `big-desktop` |
+
+---
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Use rem for everything" icon="ruler">
+    Spacing, fonts, widths - everything should use rem to benefit from automatic scaling
+  </Card>
+  
+  <Card title="Test on real devices" icon="mobile-screen">
+    Emulators are good, but nothing beats testing on actual phones and tablets
+  </Card>
+  
+  <Card title="Keep media queries together" icon="layer-group">
+    Place all responsive rules for an element in one location, not scattered across files
+  </Card>
+  
+  <Card title="Don't over-optimize" icon="triangle-exclamation">
+    You don't need media queries for every element - let the base font scaling do most of the work
+  </Card>
+  
+  <Card title="Think in proportions" icon="percentage">
+    Design systems that scale proportionally rather than setting fixed sizes for each breakpoint
+  </Card>
+  
+  <Card title="Test edge cases" icon="border-all">
+    Check behavior at exactly 600px, 900px, 1200px, and 1800px
+  </Card>
+</CardGroup>
+
+---
+
+## Common Pitfalls
+
+<Warning>
+**Mixing mobile-first and desktop-first**
+
+Don't mix `min-width` and `max-width` randomly. Natours uses desktop-first (`max-width`) for everything except `big-desktop`.
+</Warning>
+
+<Warning>
+**Using px in media queries**
+
+Always use `em` units in media queries for accessibility, never `px` or `rem`.
+</Warning>
+
+<Warning>
+**Forgetting cascade order**
+
+Media queries later in the code override earlier ones. Order breakpoints from largest to smallest.
+</Warning>
+
+<Warning>
+**Not testing at breakpoint boundaries**
+
+A design might look perfect at 800px but break at exactly 900px where the breakpoint triggers.
+</Warning>
+
+---
+
+## Related Topics
+
+<CardGroup cols={2}>
+  <Card title="Sass Mixins" icon="function" href="/advanced/mixins">
+    Learn about all mixins including `respond`, `absCenter`, and `clearfix`
+  </Card>
+  
+  <Card title="Variables" icon="dollar-sign" href="/styling/colors-variables">
+    Explore the variable system and grid configuration
+  </Card>
+</CardGroup>

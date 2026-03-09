@@ -1,0 +1,489 @@
+---
+title: Sass File Structure
+description: Deep dive into the Sass module system and file organization in Natours
+icon: folder-tree
+---
+
+## Overview
+
+Natours uses the modern Sass module system with `@use` and `@forward` directives, providing better encapsulation and namespace management compared to the legacy `@import` syntax.
+
+<Note>
+The `@use` directive was introduced in Dart Sass 1.23.0 and is now the recommended way to load Sass files. It provides better performance and prevents accidental global namespace pollution.
+</Note>
+
+## The Module System
+
+### Main Entry Point
+
+The `main.scss` file acts as the orchestrator, loading all modules in the correct order:
+
+```scss sass/main.scss
+@use "./abstracts/functions";
+@use "./abstracts/mixins";
+@use "./abstracts/variables";
+
+@use "./base/animations";
+@use "./base/base";
+@use "./base/typography";
+@use "./base/utilities";
+
+@use "./components/button";
+@use "./components/composition";
+@use "./components/feature-box";
+@use "./components/card";
+@use "./components/story";
+@use "./components/bg-video";
+@use "./components/form";
+@use "./components/popup";
+
+@use "./components/layout/navigation";
+@use "./components/layout/header";
+@use "./components/layout/grid";
+@use "./components/layout/footer";
+
+@use "./components/pages/home";
+```
+
+<Steps>
+  <Step title="Load Abstracts First">
+    Variables, functions, and mixins are loaded first because other modules depend on them.
+  </Step>
+  
+  <Step title="Apply Base Styles">
+    Global resets, typography, and utilities are loaded to establish the foundation.
+  </Step>
+  
+  <Step title="Import Components">
+    Individual UI components are loaded in any order since they don't depend on each other.
+  </Step>
+  
+  <Step title="Add Layout Modules">
+    Layout-specific styles for header, footer, grid, and navigation are loaded.
+  </Step>
+  
+  <Step title="Include Page Styles">
+    Page-specific styles are loaded last to allow for overrides if needed.
+  </Step>
+</Steps>
+
+## Abstracts Layer
+
+The abstracts folder contains Sass code that doesn't output CSS directly but provides tools for other files.
+
+### Variables
+
+The `_variables.scss` file defines all global constants:
+
+```scss sass/abstracts/_variables.scss
+// COLORS
+$color-primary: #55C57A;
+$color-primary-light: #7ED56F;
+$color-primary-dark: #28B485;
+
+$color-secondary-light: #FFB900;
+$color-secondary-dark: #FF7730;
+
+$color-tertiary-light: #2998FF;
+$color-tertiary-dark: #5643FA;
+
+$color-grey-light-1: #F7F7F7;
+$color-grey-light-2: #EEE;
+
+$color-grey-dark-1: #777;
+$color-grey-dark-2: #999;
+$color-grey-dark-3: #333;
+
+$color-white: #FFF;
+$color-black: #000;
+
+// FONT
+$default-font-size: 1.6rem;
+
+// GRID
+$grid-width: 114rem;
+$gutter-vertical: 8rem;
+$gutter-horizontal: 6rem;
+```
+
+<Tip>
+Variables use semantic naming that describes their purpose (e.g., `$color-primary`) rather than their value (e.g., `$green`). This makes the code more maintainable when design changes occur.
+</Tip>
+
+### Mixins
+
+The `_mixins.scss` file contains reusable style patterns:
+
+```scss sass/abstracts/_mixins.scss
+@mixin clearfix {
+  &::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+@mixin absCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);  
+}
+
+// MEDIA QUERY MANAGER
+@mixin respond($breakpoint) {
+  @if $breakpoint == phone {
+    @media (max-width: 37.5em) { @content };      //600px
+  }
+  @if $breakpoint == tab-port {
+    @media (max-width: 56.25em) { @content };     //900px
+  }
+  @if $breakpoint == tab-land {
+    @media (max-width: 75em) { @content };        //1200px
+  }
+  @if $breakpoint == big-desktop {
+    @media (min-width: 112.5em) { @content };     //1800px
+  }
+}
+```
+
+### Functions
+
+The `_functions.scss` file is currently empty but ready for custom Sass functions:
+
+```scss sass/abstracts/_functions.scss
+// Custom Sass functions can be added here
+// Example:
+// @function strip-unit($number) {
+//   @return $number / ($number * 0 + 1);
+// }
+```
+
+## Using Modules in Components
+
+### Importing with Namespace
+
+By default, `@use` creates a namespace based on the filename:
+
+```scss
+@use "../abstracts/variables";
+
+.btn {
+  color: variables.$color-primary; // Access with namespace
+}
+```
+
+### Importing Without Namespace
+
+Use `as *` to import without a namespace:
+
+```scss
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+.btn {
+  font-size: $default-font-size; // Direct access
+  
+  &--white {
+    background-color: $color-white;
+  }
+}
+```
+
+<Warning>
+While `as *` is convenient, use it carefully to avoid naming conflicts. It's safe for abstracts since they're used across many files and their names are chosen to be unique.
+</Warning>
+
+## Base Layer
+
+The base layer establishes global styles that apply throughout the project.
+
+### Base Resets
+
+```scss sass/base/_base.scss
+@use "../abstracts/mixins" as *;
+
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+
+html {
+  font-size: 62.5%; // 1rem = 10px
+  scroll-behavior: smooth;
+
+  @include respond(tab-land) {
+    font-size: 56.25%; // 1rem = 9px
+  }
+  
+  @include respond(tab-port) {
+    font-size: 50%; // 1rem = 8px
+  }
+
+  @include respond(big-desktop) {
+    font-size: 75%; // 1rem = 12px
+  }
+}
+
+body {
+  box-sizing: border-box;
+}
+```
+
+<Note>
+The `font-size: 62.5%` trick on the html element makes 1rem equal to 10px (62.5% of 16px), making rem calculations easier while still being relative to user preferences.
+</Note>
+
+### Typography
+
+```scss sass/base/_typography.scss
+@use "../abstracts/variables" as *;
+
+body {
+  font-family: 'Lato', sans-serif;
+  font-weight: 400;
+  line-height: 1.7;
+  color: $color-grey-dark-1;
+  padding: 2rem;
+}
+
+.heading-primary {
+  color: $color-white;
+  text-transform: uppercase;
+  backface-visibility: hidden;
+  margin-bottom: 6rem;
+  
+  &--main {
+    display: block;
+    font-size: 6rem;
+    font-weight: 400;
+    letter-spacing: 3.5rem;
+    animation: moveInLeft 1s ease;
+  }
+  
+  &--sub {
+    display: block;
+    font-size: 2rem;
+    font-weight: 400;
+    letter-spacing: 1.75rem;
+    animation: moveInRight 1s ease;
+  }
+}
+```
+
+### Animations
+
+```scss sass/base/_animations.scss
+@keyframes moveInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+
+  80% {
+    transform: translateX(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes moveInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+
+  80% {
+    transform: translateX(-10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+```
+
+### Utilities
+
+Utility classes provide single-purpose helpers:
+
+```scss sass/base/_utilities.scss
+.u-center-text { text-align: center !important; }
+
+.u-margin-bottom-small { margin-bottom: 1.5rem !important; }
+.u-margin-bottom-medium { margin-bottom: 4rem !important; }
+.u-margin-bottom-big { margin-bottom: 8rem !important; }
+.u-margin-bottom-huge { margin-bottom: 10rem !important; }
+
+.u-margin-top-small { margin-top: 1.5rem !important; }
+.u-margin-top-medium { margin-top: 4rem !important; }
+.u-margin-top-big { margin-top: 8rem !important; }
+.u-margin-top-huge { margin-top: 10rem !important; }
+```
+
+<Tip>
+Utility classes use the `u-` prefix and `!important` to ensure they override component styles, making them reliable for quick adjustments.
+</Tip>
+
+## Component Structure
+
+Each component follows a consistent pattern:
+
+### Example: Feature Box Component
+
+```scss sass/components/_feature-box.scss
+@use "../abstracts/variables" as *;
+
+.feature-box {
+  background-color: rgba($color-white, .8);
+  font-size: 1.5rem;
+  padding: 2.4rem;
+  text-align: center;
+  border-radius: 4px;
+  box-shadow: 0 1.5rem 4rem rgba($color-black, .15);
+  cursor: default;
+  transition: transform .3s ease;
+
+  &__icon {
+    font-size: 6rem;
+    margin-bottom: .5rem;
+    display: inline-block;
+    background-image: linear-gradient(
+      to right, 
+      $color-primary-light, 
+      $color-primary-dark
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  &:hover {
+    transform: translateY(-6px) scale(1.03);
+  }
+}
+```
+
+<CardGroup cols={2}>
+  <Card title="BEM Naming" icon="tag">
+    Components use BEM (Block Element Modifier) naming with `&__` for elements and `&--` for modifiers.
+  </Card>
+  
+  <Card title="Single Responsibility" icon="cube">
+    Each component file contains styles for one UI component and its variations.
+  </Card>
+</CardGroup>
+
+## Layout Structure
+
+### Grid System
+
+The grid system demonstrates advanced Sass usage:
+
+```scss sass/components/layout/_grid.scss
+@use "../../abstracts/variables" as *;
+@use "../../abstracts/mixins" as *;
+
+.row {
+  max-width: $grid-width;
+  margin: 0 auto;
+  
+  &:not(:last-child) {
+    margin-bottom: $gutter-vertical;
+  }
+
+  @include clearfix;
+
+  [class^="col-"] {
+    float: left;
+  
+    &:not(:last-child) {
+      margin-right: $gutter-horizontal;
+    }
+  }
+
+  .col-1-of-2 {
+    width: calc((100% - #{$gutter-horizontal}) / 2);
+  }
+
+  .col-1-of-3 {
+    width: calc((100% - 2 * #{$gutter-horizontal}) / 3);
+  }
+
+  .col-1-of-4 {
+    width: calc((100% - 3 * #{$gutter-horizontal}) / 4);
+  }
+}
+```
+
+<Note>
+Notice the `../../` path to access abstracts from the nested layout folder. The module system uses relative paths based on file location.
+</Note>
+
+## Compilation Process
+
+<Steps>
+  <Step title="Entry Point">
+    Sass compiler reads `sass/main.scss`
+  </Step>
+  
+  <Step title="Resolve Dependencies">
+    Processes all `@use` directives recursively
+  </Step>
+  
+  <Step title="Evaluate Abstracts">
+    Resolves variables, mixins, and functions
+  </Step>
+  
+  <Step title="Generate CSS">
+    Outputs compiled CSS to `css/style.css`
+  </Step>
+</Steps>
+
+```bash Terminal
+npm run compile:sass
+# Runs: sass sass/main.scss css/style.css -w
+```
+
+<Warning>
+The `-w` flag enables watch mode. The compiler will recompile automatically whenever any `.scss` file changes.
+</Warning>
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Consistent Imports" icon="arrow-right-to-bracket">
+    Always import abstracts at the top of component files using `as *` for convenience.
+  </Card>
+  
+  <Card title="Partial Files" icon="file">
+    All Sass files except `main.scss` start with underscore (`_`) to mark them as partials.
+  </Card>
+  
+  <Card title="Relative Paths" icon="route">
+    Use relative paths in `@use` directives. Navigate up with `../` as needed.
+  </Card>
+  
+  <Card title="Load Order" icon="list-ol">
+    Import abstracts before base, base before components. Order matters for dependencies.
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Architecture" icon="sitemap" href="/concepts/architecture">
+    Learn about the overall project architecture
+  </Card>
+  
+  <Card title="Responsive Design" icon="mobile" href="/concepts/responsive-design">
+    Explore the responsive design system
+  </Card>
+</CardGroup>

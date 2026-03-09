@@ -1,0 +1,568 @@
+---
+title: Responsive Design System
+description: Learn about breakpoints, media queries, and the mobile-first approach in Natours
+icon: mobile-screen
+---
+
+## Overview
+
+Natours implements a comprehensive responsive design system using a centralized mixin-based approach. The system uses **desktop-first** design with strategic breakpoints for tablets and mobile devices.
+
+<Note>
+While modern best practices often favor mobile-first, Natours uses a desktop-first approach with max-width media queries, which is perfectly valid for projects designed primarily for desktop viewing.
+</Note>
+
+## The Respond Mixin
+
+The core of the responsive system is the `respond` mixin located in `sass/abstracts/_mixins.scss`:
+
+```scss sass/abstracts/_mixins.scss
+// MEDIA QUERY MANAGER
+/* 
+0      - 600px:     Phone
+600px  - 900px:     Tablet portrait
+900px  - 1200px:    Tablet landscape
+1200px - 1800px:    Normal styles (desktop)
+1800px - > :        Big desktop
+
+$breakpoint argument choices:
+- phone
+- tab-port
+- tab-land
+- big-desktop
+*/
+@mixin respond($breakpoint) {
+  @if $breakpoint == phone {
+    @media (max-width: 37.5em) { @content };      //600px
+  }
+  @if $breakpoint == tab-port {
+    @media (max-width: 56.25em) { @content };     //900px
+  }
+  @if $breakpoint == tab-land {
+    @media (max-width: 75em) { @content };        //1200px
+  }
+  @if $breakpoint == big-desktop {
+    @media (min-width: 112.5em) { @content };     //1800px
+  }
+}
+```
+
+<Tip>
+The mixin uses `em` units for media queries instead of `px` or `rem`. This is a best practice because em-based media queries are more reliable across browsers and respect user browser settings.
+</Tip>
+
+## Breakpoint System
+
+<CardGroup cols={2}>
+  <Card title="Phone" icon="mobile">
+    **0 - 600px** (`max-width: 37.5em`)
+    
+    Mobile phones in portrait orientation. Smallest screens with single-column layouts.
+  </Card>
+  
+  <Card title="Tablet Portrait" icon="tablet">
+    **600px - 900px** (`max-width: 56.25em`)
+    
+    Tablets in portrait mode. Medium-sized screens with simplified layouts.
+  </Card>
+  
+  <Card title="Tablet Landscape" icon="tablet-screen-button">
+    **900px - 1200px** (`max-width: 75em`)
+    
+    Tablets in landscape mode and small laptops. Approaching full desktop layout.
+  </Card>
+  
+  <Card title="Big Desktop" icon="desktop">
+    **1800px+** (`min-width: 112.5em`)
+    
+    Large desktop monitors. Enhanced sizing for ultra-wide screens.
+  </Card>
+</CardGroup>
+
+### Breakpoint Reference
+
+<Tabs>
+  <Tab title="Overview">
+    | Breakpoint | Min Width | Max Width | Em Value | Use Case |
+    |------------|-----------|-----------|----------|----------|
+    | **phone** | 0px | 600px | 37.5em | Mobile phones |
+    | **tab-port** | 601px | 900px | 56.25em | Tablet portrait |
+    | **tab-land** | 901px | 1200px | 75em | Tablet landscape |
+    | **desktop** | 1201px | 1800px | — | Default styles |
+    | **big-desktop** | 1801px | ∞ | 112.5em | Large screens |
+  </Tab>
+  
+  <Tab title="Conversion">
+    **Converting px to em:**
+    
+    ```scss
+    // Formula: pixels / 16 = em
+    600px ÷ 16 = 37.5em   // phone
+    900px ÷ 16 = 56.25em  // tab-port
+    1200px ÷ 16 = 75em    // tab-land
+    1800px ÷ 16 = 112.5em // big-desktop
+    ```
+    
+    The division by 16 assumes the default browser font-size of 16px.
+  </Tab>
+</Tabs>
+
+## Usage Examples
+
+### Base Font Sizing
+
+The most fundamental responsive implementation is in `_base.scss`:
+
+```scss sass/base/_base.scss
+@use "../abstracts/mixins" as *;
+
+html {
+  font-size: 62.5%; // 10px (desktop default)
+  scroll-behavior: smooth;
+
+  @include respond(tab-land) {
+    font-size: 56.25%; // 9px
+  }
+  
+  @include respond(tab-port) {
+    font-size: 50%; // 8px
+  }
+
+  @include respond(big-desktop) {
+    font-size: 75%; // 12px
+  }
+}
+```
+
+<Steps>
+  <Step title="Desktop (Default)">
+    Font size is 62.5% of 16px = **10px**. This makes 1rem = 10px for easy calculations.
+  </Step>
+  
+  <Step title="Tablet Landscape">
+    At 1200px and below, font size reduces to 56.25% = **9px**. All rem-based sizes scale down proportionally.
+  </Step>
+  
+  <Step title="Tablet Portrait">
+    At 900px and below, font size reduces to 50% = **8px**. Further scaling for smaller screens.
+  </Step>
+  
+  <Step title="Big Desktop">
+    At 1800px and above, font size increases to 75% = **12px**. Everything scales up for large monitors.
+  </Step>
+</Steps>
+
+<Warning>
+Changing the root font-size affects **all rem-based values** throughout the site. This is the power of using rem units - one change scales everything proportionally.
+</Warning>
+
+### Component Responsive Design
+
+Here's how components implement responsive behavior:
+
+#### Card Component
+
+```scss sass/components/_card.scss
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+.card {
+  perspective: 150rem;
+  position: relative;
+  height: 50rem;
+
+  &__side {
+    height: 50rem;
+    transition: transform .8s ease;
+    position: absolute;
+    width: 100%;
+    backface-visibility: hidden;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 1.5rem 4rem rgba($color-black, .15);
+
+    &--back {
+      transform: rotateY(180deg);
+    }
+  }
+  
+  &:hover &__side--front {
+    transform: rotateY(180deg);
+  }
+  
+  &:hover &__side--back {
+    transform: rotateY(0);
+  }
+
+  // CTA positioning uses absCenter mixin
+  &__cta {
+    width: 90%;
+    text-align: center;
+    @include absCenter;
+  }
+}
+```
+
+<Note>
+The card component relies on root font-size changes for responsive behavior rather than explicit breakpoints. Since all dimensions use `rem` units (e.g., `50rem`), they automatically scale when the root font-size changes.
+</Note>
+
+#### Button Component
+
+```scss sass/components/_button.scss
+@use "../abstracts/variables" as *;
+
+.btn {
+  &:link, 
+  &:visited {
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 1.5rem 4rem;        // Scales with root font-size
+    display: inline-block;
+    border-radius: 10rem;        // Scales with root font-size
+    transition: all .2s ease;
+    position: relative;
+    font-size: $default-font-size; // 1.6rem - scales automatically
+  }
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba($color-black, .2);
+  }
+}
+```
+
+### Grid System Responsiveness
+
+The grid system uses the clearfix mixin and adapts through rem-based spacing:
+
+```scss sass/components/layout/_grid.scss
+@use "../../abstracts/variables" as *;
+@use "../../abstracts/mixins" as *;
+
+.row {
+  max-width: $grid-width;         // 114rem - scales automatically
+  margin: 0 auto;
+  
+  &:not(:last-child) {
+    margin-bottom: $gutter-vertical; // 8rem - scales automatically
+  }
+
+  @include clearfix;
+
+  [class^="col-"] {
+    float: left;
+  
+    &:not(:last-child) {
+      margin-right: $gutter-horizontal; // 6rem - scales automatically
+    }
+  }
+
+  .col-1-of-2 {
+    width: calc((100% - #{$gutter-horizontal}) / 2);
+  }
+
+  .col-1-of-3 {
+    width: calc((100% - 2 * #{$gutter-horizontal}) / 3);
+  }
+}
+```
+
+<Tip>
+The grid uses `calc()` with Sass interpolation `#{}` to create fluid column widths that account for gutters. The gutters themselves scale with the root font-size since they use rem units.
+</Tip>
+
+## Desktop-First Approach
+
+### How It Works
+
+<Steps>
+  <Step title="Write Desktop Styles First">
+    Default styles target desktop screens (1200px - 1800px). These are written outside any media queries.
+    
+    ```scss
+    .heading-primary {
+      font-size: 6rem;  // Desktop default
+      letter-spacing: 3.5rem;
+    }
+    ```
+  </Step>
+  
+  <Step title="Override for Smaller Screens">
+    Use `max-width` media queries to override styles for progressively smaller screens.
+    
+    ```scss
+    .heading-primary {
+      @include respond(tab-land) {
+        font-size: 5rem;  // Smaller tablets
+      }
+      
+      @include respond(phone) {
+        font-size: 3rem;  // Phones
+      }
+    }
+    ```
+  </Step>
+  
+  <Step title="Enhance for Larger Screens">
+    Use `min-width` for big desktop to scale up.
+    
+    ```scss
+    .heading-primary {
+      @include respond(big-desktop) {
+        font-size: 7rem;  // Large monitors
+      }
+    }
+    ```
+  </Step>
+</Steps>
+
+### Desktop-First vs Mobile-First
+
+<Tabs>
+  <Tab title="Desktop-First (Natours)">
+    **Advantages:**
+    - Natural for desktop-focused designs
+    - Easier to progressively simplify for mobile
+    - Works well with legacy browser support
+    
+    **Implementation:**
+    ```scss
+    .element {
+      // Desktop styles (default)
+      font-size: 2rem;
+      padding: 3rem;
+      
+      // Tablet
+      @include respond(tab-land) {
+        font-size: 1.8rem;
+        padding: 2rem;
+      }
+      
+      // Mobile
+      @include respond(phone) {
+        font-size: 1.4rem;
+        padding: 1rem;
+      }
+    }
+    ```
+  </Tab>
+  
+  <Tab title="Mobile-First (Alternative)">
+    **Advantages:**
+    - Better performance on mobile (fewer overrides)
+    - Encourages mobile-focused thinking
+    - Progressive enhancement philosophy
+    
+    **Implementation:**
+    ```scss
+    .element {
+      // Mobile styles (default)
+      font-size: 1.4rem;
+      padding: 1rem;
+      
+      // Tablet
+      @media (min-width: 56.25em) {
+        font-size: 1.8rem;
+        padding: 2rem;
+      }
+      
+      // Desktop
+      @media (min-width: 75em) {
+        font-size: 2rem;
+        padding: 3rem;
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Responsive Typography
+
+Typography scales automatically through the root font-size system:
+
+```scss sass/base/_typography.scss
+@use "../abstracts/variables" as *;
+
+.heading-primary {
+  color: $color-white;
+  text-transform: uppercase;
+  margin-bottom: 6rem;           // 60px → 54px → 48px → 72px
+  
+  &--main {
+    font-size: 6rem;             // 60px → 54px → 48px → 72px
+    letter-spacing: 3.5rem;       // 35px → 31.5px → 28px → 42px
+    animation: moveInLeft 1s ease;
+  }
+  
+  &--sub {
+    font-size: 2rem;             // 20px → 18px → 16px → 24px
+    letter-spacing: 1.75rem;      // 17.5px → 15.75px → 14px → 21px
+    animation: moveInRight 1s ease;
+  }
+}
+
+.heading-secondary {
+  font-size: 3.5rem;             // Scales automatically
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.paragraph {
+  font-size: $default-font-size;  // 1.6rem - scales automatically
+
+  &:not(:last-child) {
+    margin-bottom: 3rem;          // Scales automatically
+  }
+}
+```
+
+<CardGroup cols={2}>
+  <Card title="Automatic Scaling" icon="scale-balanced">
+    All rem-based typography scales automatically without explicit breakpoints. Change the root font-size, and everything adjusts.
+  </Card>
+  
+  <Card title="Proportional Spacing" icon="up-right-and-down-left-from-center">
+    Margins, padding, and letter-spacing all use rem units, maintaining proportional relationships across breakpoints.
+  </Card>
+</CardGroup>
+
+## Advanced Patterns
+
+### Using Multiple Breakpoints
+
+```scss
+.navigation {
+  // Desktop default
+  display: flex;
+  gap: 3rem;
+  
+  @include respond(tab-land) {
+    // Tablet landscape - slightly reduced
+    gap: 2rem;
+  }
+  
+  @include respond(tab-port) {
+    // Tablet portrait - stack vertically
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  @include respond(phone) {
+    // Phone - hamburger menu
+    display: none;
+    
+    &--open {
+      display: flex;
+    }
+  }
+  
+  @include respond(big-desktop) {
+    // Large screens - more space
+    gap: 4rem;
+  }
+}
+```
+
+### Conditional Mixin Usage
+
+```scss
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+
+.form {
+  &__input {
+    font-size: 1.5rem;
+    padding: 1.5rem 2rem;
+    border-radius: 4px;
+    background-color: rgba($color-white, .5);
+    width: 90%;
+    transition: all .3s ease;
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 1rem 2rem rgba($color-black, .1);
+      border-bottom: 3px solid $color-primary;
+    }
+  }
+
+  &__radio-button {
+    height: 3rem;
+    width: 3rem;
+    border: 5px solid $color-primary;
+    border-radius: 50%;
+
+    &::after {
+      height: 1.3rem;
+      width: 1.3rem;
+      border-radius: 50%;
+      background-color: $color-primary;
+      
+      @include absCenter;  // Mixin for perfect centering
+    }
+  }
+}
+```
+
+<Note>
+The `absCenter` mixin is used throughout the codebase for perfect centering. It's responsive by nature since it uses transforms rather than fixed positioning.
+</Note>
+
+## Testing Responsiveness
+
+<Steps>
+  <Step title="Browser DevTools">
+    Use Chrome/Firefox DevTools responsive design mode to test breakpoints:
+    - Desktop: 1440px
+    - Tablet Landscape: 1024px
+    - Tablet Portrait: 768px
+    - Phone: 375px
+  </Step>
+  
+  <Step title="Physical Devices">
+    Test on actual devices when possible:
+    - iPhone SE (small phone)
+    - iPad (tablet)
+    - Desktop monitor (1920px+)
+  </Step>
+  
+  <Step title="Root Font Check">
+    Verify font-size scaling by inspecting the `<html>` element at each breakpoint.
+  </Step>
+</Steps>
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Use rem Units" icon="ruler">
+    Always use `rem` for sizes, spacing, and typography. Avoid `px` except for borders (1px, 2px).
+  </Card>
+  
+  <Card title="Test Edge Cases" icon="mobile">
+    Test at exact breakpoint values (600px, 900px, 1200px, 1800px) to ensure smooth transitions.
+  </Card>
+  
+  <Card title="Consolidate Media Queries" icon="compress">
+    Keep all responsive rules for a component in the same file, nested within the component.
+  </Card>
+  
+  <Card title="Semantic Breakpoints" icon="tag">
+    Use semantic names (`phone`, `tab-port`) rather than size names (`small`, `medium`).
+  </Card>
+</CardGroup>
+
+<Warning>
+**Common Pitfall:** Don't mix rem and px units haphazardly. If you use px for a dimension, it won't scale with the root font-size changes, breaking the responsive system.
+</Warning>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Architecture" icon="sitemap" href="/concepts/architecture">
+    Understand the overall project structure
+  </Card>
+  
+  <Card title="Sass Structure" icon="folder-tree" href="/concepts/sass-structure">
+    Learn about file organization and modules
+  </Card>
+</CardGroup>

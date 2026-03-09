@@ -1,0 +1,415 @@
+---
+title: 'Utility Classes'
+description: 'Utility-first helper classes for common styling patterns'
+icon: 'wrench'
+---
+
+## Overview
+
+Natours includes a set of utility classes defined in `sass/base/_utilities.scss` for common styling patterns like text alignment and spacing. These single-purpose classes follow a utility-first approach and use `!important` to ensure they override component-specific styles.
+
+<Note>
+  All utility classes are prefixed with `u-` to clearly distinguish them from component classes and prevent naming collisions.
+</Note>
+
+## Text Alignment
+
+### Center Text
+
+Center-align text content within its container.
+
+```scss sass/base/_utilities.scss
+.u-center-text { 
+  text-align: center !important; 
+}
+```
+
+**Usage Example:**
+
+```html
+<div class="u-center-text">
+  <h2 class="heading-secondary">Centered Heading</h2>
+  <p class="paragraph">This text is centered.</p>
+</div>
+```
+
+<Tip>
+  Use `.u-center-text` on section containers to center all child text elements at once.
+</Tip>
+
+## Margin Utilities
+
+Natours provides a comprehensive set of margin utilities for both bottom and top spacing in four size variations.
+
+### Margin Bottom
+
+Add consistent bottom spacing to elements.
+
+```scss sass/base/_utilities.scss
+.u-margin-bottom-small { margin-bottom: 1.5rem !important; }
+.u-margin-bottom-medium { margin-bottom: 4rem !important; }
+.u-margin-bottom-big { margin-bottom: 8rem !important; }
+.u-margin-bottom-huge { margin-bottom: 10rem !important; }
+```
+
+<CardGroup cols={2}>
+  <Card title="Small" icon="down">
+    `1.5rem` (15px)
+    
+    Tight spacing between related elements
+  </Card>
+  
+  <Card title="Medium" icon="down">
+    `4rem` (40px)
+    
+    Standard spacing between components
+  </Card>
+  <Card title="Big" icon="down">
+    `8rem` (80px)
+    
+    Large spacing between sections
+  </Card>
+  
+  <Card title="Huge" icon="down">
+    `10rem` (100px)
+    
+    Maximum spacing for major section breaks
+  </Card>
+</CardGroup>
+
+**Usage Examples:**
+
+<Tabs>
+  <Tab title="Small">
+    ```html
+    <h3 class="heading-tertiary u-margin-bottom-small">
+      Component Title
+    </h3>
+    <p class="paragraph">
+      Tight spacing between heading and paragraph.
+    </p>
+    ```
+    
+    **Use Case:** Related elements that should appear closely grouped
+  </Tab>
+  
+  <Tab title="Medium">
+    ```html
+    <div class="feature-box u-margin-bottom-medium">
+      <i class="feature-box__icon">🗺️</i>
+      <h3 class="heading-tertiary">Explore the world</h3>
+    </div>
+    ```
+    
+    **Use Case:** Standard spacing between components or cards
+  </Tab>
+  
+  <Tab title="Big">
+    ```html
+    <section class="section-about u-margin-bottom-big">
+      <h2 class="heading-secondary">About Section</h2>
+      <!-- Section content -->
+    </section>
+    ```
+    
+    **Use Case:** Large spacing between major sections
+  </Tab>
+  
+  <Tab title="Huge">
+    ```html
+    <section class="section-features u-margin-bottom-huge">
+      <h2 class="heading-secondary">Features</h2>
+      <!-- Feature content -->
+    </section>
+    ```
+    
+    **Use Case:** Maximum spacing for visual separation between major page sections
+  </Tab>
+</Tabs>
+
+### Margin Top
+
+Add consistent top spacing to elements.
+
+```scss sass/base/_utilities.scss
+.u-margin-top-small { margin-top: 1.5rem !important; }
+.u-margin-top-medium { margin-top: 4rem !important; }
+.u-margin-top-big { margin-top: 8rem !important; }
+.u-margin-top-huge { margin-top: 10rem !important; }
+```
+
+Top margin utilities use the same size scale as bottom margins:
+
+- **Small:** 1.5rem (15px)
+- **Medium:** 4rem (40px)
+- **Big:** 8rem (80px)
+- **Huge:** 10rem (100px)
+
+**Usage Example:**
+
+```html
+<div class="text-box">
+  <p class="paragraph">First paragraph.</p>
+  <p class="paragraph u-margin-top-medium">Second paragraph with extra top spacing.</p>
+</div>
+```
+
+<Note>
+  Top margin utilities are less commonly used than bottom margins. Prefer bottom margins for vertical rhythm, and use top margins only when you need to push an element down from its sibling.
+</Note>
+
+## Spacing Scale
+
+Natours follows a consistent spacing scale across all utilities:
+
+| Size | Value | Use Case |
+|------|-------|----------|
+| Small | 1.5rem (15px) | Tight spacing, related elements |
+| Medium | 4rem (40px) | Component spacing, standard gaps |
+| Big | 8rem (80px) | Section spacing, major breaks |
+| Huge | 10rem (100px) | Maximum spacing, page sections |
+
+<Tip>
+  This spacing scale matches the vertical gutter system (`$gutter-vertical: 8rem`) for consistent rhythm throughout the design.
+</Tip>
+
+## Using !important
+
+All utility classes use `!important` to ensure they override component-specific styles:
+
+```scss
+.u-center-text { text-align: center !important; }
+```
+
+### Why !important?
+
+<Steps>
+  <Step title="Override Specificity">
+    Utilities need to work regardless of component specificity:
+    
+    ```html
+    <div class="section section--dark u-center-text">
+      <!-- Text will be centered even if .section has text-align rules -->
+    </div>
+    ```
+  </Step>
+  
+  <Step title="Guarantee Behavior">
+    Developers should be confident that adding a utility class will have the expected effect
+  </Step>
+  
+  <Step title="Single Purpose">
+    Each utility does one thing and does it reliably
+  </Step>
+</Steps>
+
+<Warning>
+  While `!important` is appropriate for utilities, avoid using it in component styles. Keep `!important` usage limited to the utility classes.
+</Warning>
+
+## Real-World Examples
+
+### Section Header
+
+Combining text alignment and spacing utilities:
+
+```html
+<section class="section-about">
+  <div class="u-center-text u-margin-bottom-big">
+    <h2 class="heading-secondary">
+      Exciting tours for adventurous people
+    </h2>
+  </div>
+  
+  <div class="row">
+    <!-- Section content -->
+  </div>
+</section>
+```
+
+**Result:**
+- Heading is centered
+- Large bottom margin creates space before the content grid
+
+### Feature Box Grid
+
+Using margin utilities for vertical rhythm:
+
+```html
+<div class="row">
+  <div class="col-1-of-4">
+    <div class="feature-box u-margin-bottom-medium">
+      <i class="feature-box__icon">🗺️</i>
+      <h3 class="heading-tertiary u-margin-bottom-small">Explore</h3>
+      <p class="feature-box__text">Discover amazing places</p>
+    </div>
+  </div>
+  
+  <!-- More feature boxes -->
+</div>
+```
+
+**Result:**
+- Medium spacing between feature boxes
+- Small spacing between heading and description
+
+### Content Sections
+
+Creating visual hierarchy with consistent spacing:
+
+```html
+<main>
+  <section class="section-about u-margin-bottom-huge">
+    <h2 class="heading-secondary u-margin-bottom-big">
+      About Our Tours
+    </h2>
+    <!-- About content -->
+  </section>
+  
+  <section class="section-features u-margin-bottom-huge">
+    <h2 class="heading-secondary u-margin-bottom-big">
+      Our Features
+    </h2>
+    <!-- Features content -->
+  </section>
+  
+  <section class="section-tours">
+    <h2 class="heading-secondary u-margin-bottom-big">
+      Most Popular Tours
+    </h2>
+    <!-- Tours content -->
+  </section>
+</main>
+```
+
+**Result:**
+- Huge spacing between major sections
+- Big spacing between section headings and content
+- Consistent vertical rhythm throughout the page
+
+## Utility-First Approach
+
+Natours uses a hybrid approach combining component classes with utility classes:
+
+<Tabs>
+  <Tab title="Component Classes">
+    ```scss
+    // Component handles structure and specific styling
+    .feature-box {
+      background-color: $color-white;
+      padding: 2.5rem;
+      text-align: center;
+      border-radius: 3px;
+      box-shadow: 0 1.5rem 4rem rgba($color-black, .15);
+    }
+    ```
+  </Tab>
+  
+  <Tab title="Utility Classes">
+    ```html
+    <!-- Utilities handle spacing and alignment adjustments -->
+    <div class="feature-box u-margin-bottom-medium">
+      <h3 class="heading-tertiary u-margin-bottom-small">
+        Title
+      </h3>
+    </div>
+    ```
+  </Tab>
+</Tabs>
+
+### Benefits
+
+<CardGroup cols={2}>
+  <Card title="Flexibility" icon="arrows-split-up-and-left">
+    Adjust spacing without modifying component styles
+  </Card>
+  
+  <Card title="Consistency" icon="equals">
+    Use the same spacing scale across all components
+  </Card>
+  
+  <Card title="Maintainability" icon="screwdriver-wrench">
+    Update spacing globally by changing utility values
+  </Card>
+  
+  <Card title="Reusability" icon="recycle">
+    Combine utilities in different ways for various layouts
+  </Card>
+</CardGroup>
+
+## Best Practices
+
+<Steps>
+  <Step title="Use Utilities for Spacing">
+    Let components handle their internal styling, and use utilities for external spacing:
+    
+    ```html
+    <!-- ✅ Good -->
+    <div class="card u-margin-bottom-big">
+      <h3 class="card__title u-margin-bottom-small">Title</h3>
+    </div>
+    
+    <!-- ❌ Bad - spacing in component -->
+    <div class="card card--with-big-margin">
+      <h3 class="card__title">Title</h3>
+    </div>
+    ```
+  </Step>
+  
+  <Step title="Choose the Right Size">
+    Match spacing to the visual hierarchy:
+    
+    - **Small:** Tightly related elements (heading + description)
+    - **Medium:** Component spacing (between cards)
+    - **Big:** Section spacing (between major blocks)
+    - **Huge:** Page-level spacing (between major sections)
+  </Step>
+  
+  <Step title="Combine with Component Classes">
+    Use utilities alongside component classes:
+    
+    ```html
+    <section class="section-features u-center-text u-margin-bottom-huge">
+      <!-- section-features: component styling -->
+      <!-- u-center-text: text alignment -->
+      <!-- u-margin-bottom-huge: external spacing -->
+    </section>
+    ```
+  </Step>
+  
+  <Step title="Prefer Bottom Margins">
+    Use bottom margins for vertical rhythm instead of top margins when possible:
+    
+    ```html
+    <!-- ✅ Good -->
+    <h2 class="heading-secondary u-margin-bottom-big">Title</h2>
+    <p class="paragraph">Content</p>
+    
+    <!-- ❌ Less ideal -->
+    <h2 class="heading-secondary">Title</h2>
+    <p class="paragraph u-margin-top-big">Content</p>
+    ```
+  </Step>
+</Steps>
+
+## Complete Utility Reference
+
+All available utility classes from `sass/base/_utilities.scss`:
+
+```scss sass/base/_utilities.scss
+.u-center-text { text-align: center !important; }
+
+.u-margin-bottom-small { margin-bottom: 1.5rem !important; }
+.u-margin-bottom-medium { margin-bottom: 4rem !important; }
+.u-margin-bottom-big { margin-bottom: 8rem !important; }
+.u-margin-bottom-huge { margin-bottom: 10rem !important; }
+
+.u-margin-top-small { margin-top: 1.5rem !important; }
+.u-margin-top-medium { margin-top: 4rem !important; }
+.u-margin-top-big { margin-top: 8rem !important; }
+.u-margin-top-huge { margin-top: 10rem !important; }
+```
+
+<Note>
+  This is a minimal but effective set of utilities. As the project grows, you can add more utilities following the same naming convention: `.u-{property}-{value}`.
+</Note>

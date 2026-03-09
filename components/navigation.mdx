@@ -1,0 +1,725 @@
+---
+title: Navigation
+description: Full-screen hamburger navigation with animated menu icon and expanding background
+---
+
+## Overview
+
+The Natours navigation is a sophisticated full-screen menu system with a hamburger icon that transforms into an X when opened. It features a radially expanding background and smooth fade-in effects, all built with pure CSS using the checkbox hack technique.
+
+## Visual Behavior
+
+<Steps>
+  <Step title="Closed State">
+    - Hamburger icon visible in top-right corner
+    - Circular button with three horizontal lines
+    - Navigation menu hidden
+  </Step>
+  
+  <Step title="Click/Tap">
+    - Hidden checkbox toggles state
+    - Background circle expands from button
+    - Menu icon transforms to X
+  </Step>
+  
+  <Step title="Open State">
+    - Full-screen navigation overlay
+    - Menu items fade in
+    - Animated hover effects on links
+  </Step>
+</Steps>
+
+## Complete Navigation Structure
+
+```html index.html:23-44
+<div class="navigation">
+  <input type="checkbox" class="navigation__checkbox" 
+         id="navi-toggle" title="navi-toggle" />
+
+  <label for="navi-toggle" class="navigation__button">
+    <span class="navigation__icon">&nbsp;</span>
+  </label>
+  
+  <div class="navigation__background">
+    &nbsp;
+  </div>
+
+  <nav class="navigation__nav">
+    <ul class="navigation__list">
+      <li class="navigation__item">
+        <a href="#" class="navigation__link">
+          <span>01</span> Home
+        </a>
+      </li>
+      <li class="navigation__item">
+        <a href="#section-about" class="navigation__link">
+          <span>02</span> About Natous
+        </a>
+      </li>
+      <li class="navigation__item">
+        <a href="#section-features" class="navigation__link">
+          <span>03</span> Your benefits
+        </a>
+      </li>
+      <li class="navigation__item">
+        <a href="#section-tours" class="navigation__link">
+          <span>04</span> Popular tours
+        </a>
+      </li>
+      <li class="navigation__item">
+        <a href="#section-stories" class="navigation__link">
+          <span>05</span> Stories
+        </a>
+      </li>
+      <li class="navigation__item">
+        <a href="#section-book" class="navigation__link">
+          <span>06</span> Book now
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
+```
+
+<Note>
+The navigation uses a hidden checkbox to control the open/closed state. This "checkbox hack" allows toggle functionality without JavaScript.
+</Note>
+
+## Checkbox (Hidden Controller)
+
+```scss sass/components/layout/_navigation.scss:5
+&__checkbox { 
+  display: none; 
+}
+```
+
+The checkbox is completely hidden but remains functional. When the label is clicked, the checkbox toggles, triggering CSS state changes through the `:checked` pseudo-class.
+
+## Toggle Button
+
+The circular button in the top-right corner:
+
+```scss sass/components/layout/_navigation.scss:7-19
+&__button {
+  background-color: $color-white;
+  height: 7rem;
+  width: 7rem;
+  position: fixed;
+  top: 6rem;
+  right: 6rem;
+  border-radius: 50%;
+  z-index: 2000;
+  box-shadow: 0 1rem 3rem rgba($color-black, .1);
+  text-align: center;
+  cursor: pointer;
+}
+```
+
+### Button Features
+
+<Tabs>
+  <Tab title="Positioning">
+    ```scss
+    position: fixed;
+    top: 6rem;
+    right: 6rem;
+    z-index: 2000;  // Above everything
+    ```
+    
+    Fixed positioning keeps the button visible during page scroll. Highest z-index ensures it stays on top.
+  </Tab>
+  
+  <Tab title="Dimensions">
+    ```scss
+    height: 7rem;
+    width: 7rem;
+    border-radius: 50%;  // Perfect circle
+    ```
+    
+    Square dimensions (70px × 70px) with 50% border-radius create a perfect circle.
+  </Tab>
+  
+  <Tab title="Visual Style">
+    ```scss
+    background-color: $color-white;
+    box-shadow: 0 1rem 3rem rgba($color-black, .1);
+    cursor: pointer;
+    ```
+    
+    White background with subtle shadow provides depth. Pointer cursor indicates interactivity.
+  </Tab>
+</Tabs>
+
+## Expanding Background
+
+The circular element that expands to cover the screen:
+
+```scss sass/components/layout/_navigation.scss:21-31
+&__background {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  position: fixed;
+  top: 6.5rem;
+  right: 6.5rem;
+  background: radial-gradient($color-primary-light, $color-primary-dark);
+  z-index: 1000;
+  transition: transform .6s cubic-bezier(0.86, 0, 0.07, 1);
+}
+```
+
+### Background Properties
+
+**Initial size:** 6rem × 6rem (slightly smaller than button)
+
+**Position:** Centered behind the button (offset by 0.5rem)
+
+**Z-index:** 1000 (below button at 2000, above content)
+
+**Gradient:** Radial gradient from light green to dark green
+
+### Expansion Animation
+
+```scss sass/components/layout/_navigation.scss:84
+&__checkbox:checked ~ &__background { 
+  transform: scale(82); 
+}
+```
+
+<Accordion title="Why scale(82)?">
+  The background circle is 6rem (60px). To cover a typical viewport:
+  
+  - Original size: 60px
+  - Scaled size: 60px × 82 = 4,920px
+  - This ensures coverage on screens up to ~5000px
+  
+  The scale transform is GPU-accelerated for smooth performance.
+</Accordion>
+
+### Custom Easing
+
+```scss
+transition: transform .6s cubic-bezier(0.86, 0, 0.07, 1);
+```
+
+**Cubic bezier breakdown:**
+- Fast start (0.86 at first control point)
+- Smooth middle (0 at second control point)
+- Quick finish (0.07, 1)
+
+This creates an organic, "breathing" expansion effect.
+
+## Navigation Panel
+
+The full-screen menu overlay:
+
+```scss sass/components/layout/_navigation.scss:33-43
+&__nav {
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1500;
+  
+  opacity: 0;
+  width: 0;
+  transition: all .6s ease;
+}
+```
+
+### Hidden State
+
+- **Opacity: 0** - Invisible
+- **Width: 0** - Takes no space
+- **Z-index: 1500** - Between background (1000) and button (2000)
+
+### Open State
+
+```scss sass/components/layout/_navigation.scss:86-89
+&__checkbox:checked ~ &__nav {
+  opacity: 1;
+  width: 100%;
+}
+```
+
+When checkbox is checked:
+- Opacity fades from 0 to 1
+- Width expands from 0 to 100%
+- Both animate over 0.6s
+
+## Navigation List
+
+Centered menu items:
+
+```scss sass/components/layout/_navigation.scss:45-51
+&__list {
+  list-style: none;
+  text-align: center;
+  width: 100%;
+  
+  @include absCenter;
+}
+```
+
+The `absCenter` mixin positions the list perfectly in the center:
+
+```scss
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+```
+
+### List Items
+
+```scss sass/components/layout/_navigation.scss:53
+&__item { 
+  margin: 1rem; 
+}
+```
+
+Simple vertical spacing between menu items.
+
+## Navigation Links
+
+Large, animated text links with gradient hover effect:
+
+```scss sass/components/layout/_navigation.scss:55-81
+&__link {
+  &:link,
+  &:visited {
+    display: inline-block;
+    font-size: 3rem;
+    font-weight: 300;
+    padding: 1rem 2rem;
+    color: $color-white;
+    text-decoration: none;
+    text-transform: uppercase;
+    background-image: linear-gradient(120deg, 
+      transparent 0%, 
+      transparent 50%, 
+      $color-white 50%);
+    background-size: 230%;
+    transition: all .4s ease;
+
+    span {
+      margin-right: 1.5rem;
+      display: inline-block;
+    }
+  }
+  
+  &:hover,
+  &:active {
+    background-position: 100%;
+    color: $color-primary;
+    transform: translateX(1rem);
+  }
+}
+```
+
+### Link Styling
+
+**Typography:**
+```scss
+font-size: 3rem;           // Large 30px
+font-weight: 300;          // Light weight
+text-transform: uppercase;
+color: $color-white;
+```
+
+**Number styling:**
+```scss
+span {
+  margin-right: 1.5rem;    // Space between number and text
+  display: inline-block;
+}
+```
+
+### Gradient Hover Effect
+
+The link uses a clever gradient background trick:
+
+<CodeGroup>
+```scss Default State
+background-image: linear-gradient(
+  120deg, 
+  transparent 0%,      // Left half: transparent
+  transparent 50%,     // Left half: transparent
+  $color-white 50%     // Right half: white
+);
+background-size: 230%;  // 2.3x wider than link
+```
+
+```scss Hover State
+background-position: 100%;  // Shift background right
+color: $color-primary;      // Text turns green
+transform: translateX(1rem); // Slide right 10px
+```
+</CodeGroup>
+
+### How the Gradient Works
+
+<Steps>
+  <Step title="Setup">
+    Background is 230% wide with white on the right half. Only the left edge is visible.
+  </Step>
+  
+  <Step title="Hover">
+    `background-position: 100%` shifts the gradient to the right, revealing the white portion.
+  </Step>
+  
+  <Step title="Result">
+    White background sweeps in from left to right behind the text.
+  </Step>
+  
+  <Step title="Text Color">
+    Text changes from white to green, creating contrast against the new white background.
+  </Step>
+</Steps>
+
+<Tip>
+**Diagonal gradient:** The `120deg` angle creates a dynamic, diagonal sweep rather than a straight horizontal slide.
+</Tip>
+
+## Hamburger Icon
+
+The three-line menu icon that animates to an X:
+
+```scss sass/components/layout/_navigation.scss:92-115
+&__icon {
+  position: relative;
+  margin-top: 3.5rem;
+
+  &,
+  &::before,
+  &::after {
+    width: 3rem;
+    height: 2px;
+    background-color: $color-grey-dark-3;
+    display: inline-block;
+  }
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    transition: all .2s ease;
+  }
+
+  &::before { top: -.8rem; }
+  &::after { top: .8rem; }
+}
+```
+
+### Icon Structure
+
+Three horizontal lines created with one element and two pseudo-elements:
+
+<Tabs>
+  <Tab title="Middle Line">
+    ```scss
+    .navigation__icon {
+      width: 3rem;
+      height: 2px;
+      background-color: $color-grey-dark-3;
+    }
+    ```
+    
+    The main element is the middle line.
+  </Tab>
+  
+  <Tab title="Top Line">
+    ```scss
+    &::before {
+      content: "";
+      top: -.8rem;  // 8px above middle
+    }
+    ```
+    
+    Pseudo-element positioned above.
+  </Tab>
+  
+  <Tab title="Bottom Line">
+    ```scss
+    &::after {
+      content: "";
+      top: .8rem;  // 8px below middle
+    }
+    ```
+    
+    Pseudo-element positioned below.
+  </Tab>
+</Tabs>
+
+### Icon Hover Effect
+
+Lines spread apart on hover:
+
+```scss sass/components/layout/_navigation.scss:117-118
+&__button:hover &__icon::before { top: -1rem; }
+&__button:hover &__icon::after { top: 1rem; }
+```
+
+Top line moves up from -0.8rem to -1rem; bottom line moves down from 0.8rem to 1rem.
+
+## Icon Transformation to X
+
+When the menu opens, the hamburger transforms:
+
+```scss sass/components/layout/_navigation.scss:119-129
+&__checkbox:checked + &__button &__icon { 
+  background-color: transparent; 
+}
+
+&__checkbox:checked + &__button &__icon::before {
+  top: 0;
+  transform: rotate(135deg);
+}
+
+&__checkbox:checked + &__button &__icon::after { 
+  top: 0;
+  transform: rotate(-135deg); 
+}
+```
+
+### Transformation Steps
+
+<Steps>
+  <Step title="Hide Middle Line">
+    ```scss
+    background-color: transparent;
+    ```
+    
+    Middle line becomes invisible.
+  </Step>
+  
+  <Step title="Move Lines to Center">
+    ```scss
+    top: 0;  // Both ::before and ::after
+    ```
+    
+    Top and bottom lines move to the middle position.
+  </Step>
+  
+  <Step title="Rotate to Form X">
+    ```scss
+    transform: rotate(135deg);   // Top line
+    transform: rotate(-135deg);  // Bottom line
+    ```
+    
+    Lines rotate in opposite directions creating an X.
+  </Step>
+</Steps>
+
+<Note>
+**Why 135 degrees?** This creates a perfect X shape. Each line rotates 135° from horizontal, making them perpendicular when combined (270° total difference = 360° - 90° = X shape).
+</Note>
+
+## JavaScript Enhancement
+
+Optional JavaScript to close menu when clicking a link:
+
+```javascript index.html:380-388
+const navLinks = document.querySelectorAll('.navigation__link');
+
+navLinks.forEach(link => {
+  link.addEventListener('click', function () {
+    document.getElementById('navi-toggle').checked = false;
+  });
+});
+```
+
+**Purpose:** When user clicks a navigation link, the menu automatically closes by unchecking the checkbox.
+
+<Tip>
+This JavaScript is optional. The navigation works without it, but this adds a better user experience for in-page navigation.
+</Tip>
+
+## Complete Interaction Flow
+
+<Steps>
+  <Step title="User Clicks Button">
+    Clicking the `<label>` toggles the hidden `<input type="checkbox">`
+  </Step>
+  
+  <Step title="Checkbox Checked">
+    The `:checked` pseudo-class becomes active on the checkbox
+  </Step>
+  
+  <Step title="Background Expands">
+    ```scss
+    &__checkbox:checked ~ &__background { transform: scale(82); }
+    ```
+    
+    Background circle scales up to cover screen
+  </Step>
+  
+  <Step title="Menu Appears">
+    ```scss
+    &__checkbox:checked ~ &__nav { opacity: 1; width: 100%; }
+    ```
+    
+    Navigation fades in and expands to full width
+  </Step>
+  
+  <Step title="Icon Transforms">
+    ```scss
+    &__checkbox:checked + &__button &__icon { /* transform to X */ }
+    ```
+    
+    Hamburger icon animates to X shape
+  </Step>
+</Steps>
+
+## Selectors Explained
+
+### Adjacent Sibling: `+`
+
+```scss
+&__checkbox:checked + &__button
+```
+
+Selects the button that **immediately follows** the checked checkbox in the HTML.
+
+### General Sibling: `~`
+
+```scss
+&__checkbox:checked ~ &__background
+&__checkbox:checked ~ &__nav
+```
+
+Selects elements that are **siblings** (at the same level) that come after the checkbox.
+
+### Child/Descendant
+
+```scss
+&__checkbox:checked + &__button &__icon
+```
+
+Selects the icon **inside** the button that follows the checked checkbox.
+
+## Z-Index Stacking
+
+Elements are carefully layered:
+
+```scss
+// Lowest
+&__background { z-index: 1000; }  // Expanding background
+&__nav { z-index: 1500; }         // Menu content
+&__button { z-index: 2000; }      // Toggle button
+// Highest
+```
+
+This ensures:
+1. Background expands behind everything
+2. Menu appears above background
+3. Button stays on top for closing
+
+## Responsive Considerations
+
+### Button Positioning
+
+```scss
+top: 6rem;   // 60px from top
+right: 6rem; // 60px from right
+```
+
+For smaller screens, you might adjust:
+
+```scss
+@media (max-width: 56.25em) {  // 900px
+  .navigation__button {
+    top: 4rem;
+    right: 4rem;
+  }
+  
+  .navigation__background {
+    top: 4.5rem;
+    right: 4.5rem;
+  }
+}
+```
+
+## Accessibility Considerations
+
+### Keyboard Navigation
+
+The checkbox can receive keyboard focus:
+
+```html
+<input type="checkbox" class="navigation__checkbox" 
+       id="navi-toggle" title="navi-toggle" />
+```
+
+Consider adding visible focus styles:
+
+```scss
+.navigation__checkbox:focus + .navigation__button {
+  outline: 3px solid $color-primary;
+  outline-offset: 3px;
+}
+```
+
+### Screen Readers
+
+Add ARIA labels for better accessibility:
+
+```html
+<div class="navigation" aria-label="Main navigation">
+  <input type="checkbox" class="navigation__checkbox" 
+         id="navi-toggle" aria-label="Toggle navigation menu" />
+  
+  <label for="navi-toggle" class="navigation__button" 
+         aria-label="Menu toggle button">
+    <span class="navigation__icon">&nbsp;</span>
+  </label>
+  
+  <nav class="navigation__nav" aria-label="Main menu">
+    <!-- navigation items -->
+  </nav>
+</div>
+```
+
+## Browser Compatibility
+
+<Warning>
+**CSS Required:**
+- Transform: All modern browsers
+- Transitions: All modern browsers  
+- Sibling selectors: All browsers including IE9+
+- Checkbox hack: All browsers
+
+**No JavaScript required** for core functionality, making it highly reliable.
+</Warning>
+
+## Performance Notes
+
+<Tip>
+**GPU Acceleration:** Using `transform` instead of width/height for animations triggers hardware acceleration:
+
+```scss
+transform: scale(82);  // GPU accelerated ✓
+```
+
+This is much more performant than:
+
+```scss
+width: 4920px;  // Causes reflow ✗
+```
+</Tip>
+
+## Summary
+
+The navigation component showcases:
+- **Checkbox hack** for stateful CSS without JavaScript
+- **3D transforms** for smooth, performant animations
+- **Pseudo-elements** for icon creation
+- **Gradient backgrounds** for visual richness
+- **Complex selectors** for state management
+- **Fixed positioning** for persistent UI element
+- **Z-index stacking** for proper layering
+- **Custom easing** for organic motion
+- **BEM methodology** for organized, maintainable code
+
+This component demonstrates advanced CSS techniques to create a fully functional navigation menu without relying on JavaScript for the core interaction.

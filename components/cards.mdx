@@ -1,0 +1,667 @@
+---
+title: Cards
+description: 3D flip cards with perspective transforms and gradient backgrounds
+---
+
+## Overview
+
+The card component is one of the most sophisticated components in Natours, featuring a 3D flip animation that reveals different content on front and back sides. Perfect for showcasing tours, products, or pricing information with visual impact.
+
+## Visual Behavior
+
+Cards have two sides that flip on hover:
+- **Front side:** Displays image, heading, and details list
+- **Back side:** Shows pricing and call-to-action button
+- **Flip animation:** Smooth 3D rotation with perspective
+
+<Note>
+The flip effect uses CSS 3D transforms with `perspective` and `backface-visibility` to create a realistic card-turning animation without JavaScript.
+</Note>
+
+## Basic Structure
+
+```html
+<div class="card">
+  <div class="card__side card__side--front">
+    <!-- Front content -->
+  </div>
+  <div class="card__side card__side--back card__side--back-1">
+    <!-- Back content -->
+  </div>
+</div>
+```
+
+## Complete Card Example
+
+Here's a full card implementation from the tours section:
+
+```html index.html:144-171
+<div class="card">
+  <div class="card__side card__side--front">
+    <div class="card__picture card__picture--1">
+      &nbsp;
+    </div>
+    <h4 class="card__heading">
+      <span class="card__heading-span card__heading-span--1">
+        The Sea Explorer
+      </span>
+    </h4>
+    <div class="card__details">
+      <ul>
+        <li>3 day tours</li>
+        <li>Up to 30 people</li>
+        <li>2 tour guides</li>
+        <li>Sleep in cozy hotels</li>
+        <li>Difficulty: ease</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card__side card__side--back card__side--back-1">
+    <div class="card__cta">
+      <div class="cta__price-box">
+        <p class="card__price-only">Only</p>
+        <p class="card__price-value">$297</p>
+      </div>
+      <a href="#popup" class="btn btn--white">Book now</a>
+    </div>
+  </div>
+</div>
+```
+
+## Component Architecture
+
+### Container Setup
+
+The parent `.card` element establishes the 3D space:
+
+```scss sass/components/_card.scss:4-10
+.card {
+  // FUNCTIONALITY
+  -moz-perspective: 150rem;
+  perspective: 150rem;
+  position: relative;
+  height: 50rem;
+}
+```
+
+<Accordion title="Why perspective: 150rem?">
+  The `perspective` property defines how far the 3D element is from the viewer. A value of 150rem (1500px) creates a subtle, realistic 3D effect. Lower values create more dramatic perspective; higher values create flatter rotations.
+</Accordion>
+
+### Card Sides
+
+Both sides are positioned absolutely with identical dimensions:
+
+```scss sass/components/_card.scss:12-26
+&__side {
+  height: 50rem;
+  transition: transform .8s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  border-radius: 4px;
+  backface-visibility: hidden;
+  overflow: hidden;
+  box-shadow: 0 1.5rem 4rem rgba($color-black, .15);
+
+  &--front {
+    background-color: $color-white;
+  }
+}
+```
+
+<Tip>
+**Key property:** `backface-visibility: hidden` prevents the back of the card from showing through during the flip animation.
+</Tip>
+
+### Back Side Positioning
+
+The back side starts rotated 180 degrees:
+
+```scss sass/components/_card.scss:28-42
+&__side--back {
+  transform: rotateY(180deg);
+  
+  &-1 {
+    background: linear-gradient(to right bottom, 
+      $color-secondary-light, $color-secondary-dark);
+  }
+
+  &-2 {
+    background: linear-gradient(to right bottom, 
+      $color-primary-light, $color-primary-dark);
+  }
+
+  &-3 {
+    background: linear-gradient(to right bottom, 
+      $color-tertiary-light, $color-tertiary-dark);
+  }
+}
+```
+
+## Flip Animation
+
+The flip is triggered on hover with simultaneous opposite rotations:
+
+```scss sass/components/_card.scss:45-50
+&:hover &__side--front {
+  transform: rotateY(180deg);
+}
+
+&:hover &__side--back {
+  transform: rotateY(0);
+}
+```
+
+<Steps>
+  <Step title="Initial State">
+    Front side at `rotateY(0)`, back side at `rotateY(180deg)`
+  </Step>
+  
+  <Step title="Hover Trigger">
+    User hovers over card container
+  </Step>
+  
+  <Step title="Animation">
+    Front rotates to 180°, back rotates to 0° over 0.8s
+  </Step>
+  
+  <Step title="Final State">
+    Back side now visible, front side hidden (backface-visibility)
+  </Step>
+</Steps>
+
+## Front Side Elements
+
+### Card Picture
+
+The hero image with gradient overlay and clip-path:
+
+```scss sass/components/_card.scss:54-78
+&__picture {
+  background-size: cover;
+  height: 23rem;
+  background-blend-mode: screen;
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+
+  &--1 {
+    background-image: 
+      linear-gradient(to right bottom, 
+        $color-secondary-light, $color-secondary-dark), 
+      url(../img/nat-6.jpg);
+  }
+  
+  &--2 {
+    background-image: 
+      linear-gradient(to right bottom, 
+        $color-primary-light, $color-primary-dark), 
+      url(../img/nat-5.jpg);
+  }
+
+  &--3 {
+    background-image: 
+      linear-gradient(to right bottom, 
+        $color-tertiary-light, $color-tertiary-dark), 
+      url(../img/nat-7.jpg);
+  }
+}
+```
+
+<Note>
+**Clip-path polygon:** `polygon(0 0, 100% 0, 100% 85%, 0 100%)` creates a slanted bottom edge:
+- Top-left: `0 0`
+- Top-right: `100% 0`
+- Bottom-right: `100% 85%` (creates the slant)
+- Bottom-left: `0 100%`
+</Note>
+
+<Tip>
+**Blend mode:** `background-blend-mode: screen` blends the gradient with the image, creating a lighter, more vibrant appearance.
+</Tip>
+
+### Card Heading
+
+Positioned absolutely over the picture:
+
+```scss sass/components/_card.scss:80-114
+&__heading {
+  font-size: 2.8rem;
+  font-weight: 300;
+  text-transform: uppercase;
+  text-align: right;
+  color: $color-white;
+  position: absolute;
+  top: 12rem;
+  right: 2rem;
+  width: 75%;
+
+  &-span {
+    padding: 1rem 1.5rem;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+
+    &--1 {
+      background: linear-gradient(to right bottom, 
+        rgba($color-secondary-light, .85), 
+        rgba($color-secondary-dark, .85));
+    }
+    
+    &--2 {
+      background: linear-gradient(to right bottom, 
+        rgba($color-primary-light, .85), 
+        rgba($color-primary-dark, .85));
+    }
+    
+    &--3 {
+      background: linear-gradient(to right bottom, 
+        rgba($color-tertiary-light, .85), 
+        rgba($color-tertiary-dark, .85));
+    }
+  }
+}
+```
+
+<Accordion title="What is box-decoration-break?">
+  The `box-decoration-break: clone` property ensures that when text wraps to multiple lines, the padding and background are applied to each line independently, creating separate boxes rather than one continuous box.
+  
+  **Without clone:** One continuous background across all lines
+  
+  **With clone:** Each line gets its own padded background box
+</Accordion>
+
+### Card Details List
+
+Centered list with custom styling:
+
+```scss sass/components/_card.scss:116-134
+&__details {
+  padding: 3rem;
+
+  ul {
+    list-style: none;
+    width: 80%;
+    margin: 0 auto;
+
+    li {
+      text-align: center;
+      font-size: 1.5rem;
+      padding: 1rem;
+
+      &:not(:last-child) {
+        border-bottom: 1px solid $color-grey-light-2;
+      }
+    }
+  }
+}
+```
+
+**Visual appearance:**
+- Centered list at 80% width
+- Each item has 1rem padding
+- Divider line between items (except last)
+- Font size: 1.5rem (15px)
+
+## Back Side Elements
+
+### Call-to-Action Section
+
+Perfectly centered pricing and button:
+
+```scss sass/components/_card.scss:137-142
+&__cta {
+  width: 90%;
+  text-align: center;
+  
+  @include absCenter;
+}
+```
+
+Uses the `absCenter` mixin to position exactly in the middle:
+
+```scss
+@mixin absCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+```
+
+### Price Display
+
+```scss sass/components/_card.scss:144-160
+&__price-box {
+  text-align: center;
+  margin-bottom: 8rem;
+}
+
+&__price-only {
+  color: $color-white;
+  font-size: 1.4rem;
+  text-transform: uppercase;
+}
+
+&__price-value {
+  font-size: 6rem;
+  font-weight: 100;
+  color: $color-white;
+  margin-bottom: 8rem;
+}
+```
+
+**Visual hierarchy:**
+- "Only" text: Small (1.4rem), uppercase
+- Price value: Large (6rem / 60px), thin weight (100)
+- Large bottom margin creates space for button
+
+## Color Variants
+
+Three color schemes for different tour types:
+
+<Tabs>
+  <Tab title="Variant 1 (Orange)">
+    ```scss
+    // Secondary colors
+    $color-secondary-light: #FFB900;
+    $color-secondary-dark: #FF7730;
+    ```
+    
+    **Usage:** `.card__side--back-1`, `.card__picture--1`, `.card__heading-span--1`
+    
+    **Gradient:** Light yellow-orange to darker orange
+  </Tab>
+  
+  <Tab title="Variant 2 (Green)">
+    ```scss
+    // Primary colors
+    $color-primary-light: #7ED56F;
+    $color-primary-dark: #28B485;
+    ```
+    
+    **Usage:** `.card__side--back-2`, `.card__picture--2`, `.card__heading-span--2`
+    
+    **Gradient:** Light green to darker teal-green
+  </Tab>
+  
+  <Tab title="Variant 3 (Blue)">
+    ```scss
+    // Tertiary colors
+    $color-tertiary-light: #2998FF;
+    $color-tertiary-dark: #5643FA;
+    ```
+    
+    **Usage:** `.card__side--back-3`, `.card__picture--3`, `.card__heading-span--3`
+    
+    **Gradient:** Bright blue to purple-blue
+  </Tab>
+</Tabs>
+
+## Real-World Examples
+
+### Tour Card 1 - The Sea Explorer
+
+```html index.html:144-171
+<div class="col-1-of-3">
+  <div class="card">
+    <div class="card__side card__side--front">
+      <div class="card__picture card__picture--1">&nbsp;</div>
+      <h4 class="card__heading">
+        <span class="card__heading-span card__heading-span--1">
+          The Sea Explorer
+        </span>
+      </h4>
+      <div class="card__details">
+        <ul>
+          <li>3 day tours</li>
+          <li>Up to 30 people</li>
+          <li>2 tour guides</li>
+          <li>Sleep in cozy hotels</li>
+          <li>Difficulty: ease</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card__side card__side--back card__side--back-1">
+      <div class="card__cta">
+        <div class="cta__price-box">
+          <p class="card__price-only">Only</p>
+          <p class="card__price-value">$297</p>
+        </div>
+        <a href="#popup" class="btn btn--white">Book now</a>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+**Colors:** Orange gradient (variant 1)
+
+**Details:** 3-day easy tour for up to 30 people
+
+### Tour Card 2 - The Forest Hiker
+
+```html index.html:174-201
+<div class="card">
+  <div class="card__side card__side--front">
+    <div class="card__picture card__picture--2">&nbsp;</div>
+    <h4 class="card__heading">
+      <span class="card__heading-span card__heading-span--2">
+        The Sea Explorer
+      </span>
+    </h4>
+    <div class="card__details">
+      <ul>
+        <li>7 day tours</li>
+        <li>Up to 40 people</li>
+        <li>6 tour guides</li>
+        <li>Sleep in provide tents</li>
+        <li>Difficulty: medium</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card__side card__side--back card__side--back-2">
+    <div class="card__cta">
+      <div class="cta__price-box">
+        <p class="card__price-only">Only</p>
+        <p class="card__price-value">$497</p>
+      </div>
+      <a href="#popup" class="btn btn--white">Book now</a>
+    </div>
+  </div>
+</div>
+```
+
+**Colors:** Green gradient (variant 2)
+
+**Details:** 7-day medium difficulty tour for up to 40 people
+
+### Tour Card 3 - The Snow Adventurer
+
+```html index.html:204-231
+<div class="card">
+  <div class="card__side card__side--front">
+    <div class="card__picture card__picture--3">&nbsp;</div>
+    <h4 class="card__heading">
+      <span class="card__heading-span card__heading-span--3">
+        The Sea Explorer
+      </span>
+    </h4>
+    <div class="card__details">
+      <ul>
+        <li>5 day tours</li>
+        <li>Up to 15 people</li>
+        <li>3 tour guides</li>
+        <li>Sleep in provide tents</li>
+        <li>Difficulty: hard</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card__side card__side--back card__side--back-3">
+    <div class="card__cta">
+      <div class="cta__price-box">
+        <p class="card__price-only">Only</p>
+        <p class="card__price-value">$897</p>
+      </div>
+      <a href="#popup" class="btn btn--white">Book now</a>
+    </div>
+  </div>
+</div>
+```
+
+**Colors:** Blue gradient (variant 3)
+
+**Details:** 5-day hard difficulty tour for up to 15 people
+
+## Layout Context
+
+Cards are typically used within a 3-column grid:
+
+```html index.html:142-233
+<div class="row u-margin-bottom-big">
+  <div class="col-1-of-3">
+    <!-- Card 1 -->
+  </div>
+  <div class="col-1-of-3">
+    <!-- Card 2 -->
+  </div>
+  <div class="col-1-of-3">
+    <!-- Card 3 -->
+  </div>
+</div>
+```
+
+## Browser Compatibility
+
+<Warning>
+**CSS 3D Transforms** are required for the flip effect:
+
+- Chrome/Edge: Full support
+- Firefox: Full support (requires `-moz-perspective`)
+- Safari: Full support (requires `-webkit-` prefixes)
+- Mobile: Generally supported, may need testing on older devices
+</Warning>
+
+### Required Vendor Prefixes
+
+```scss
+.card {
+  -moz-perspective: 150rem;      // Firefox
+  perspective: 150rem;           // Standard
+}
+
+.card__picture {
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);  // Safari
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);          // Standard
+}
+
+.card__heading-span {
+  -webkit-box-decoration-break: clone;  // Safari
+  box-decoration-break: clone;          // Standard
+}
+```
+
+## Performance Considerations
+
+<Tip>
+**Hardware Acceleration:** 3D transforms trigger GPU acceleration, making the animation smooth even on mobile devices.
+
+**Optimization tips:**
+- The `transform` property doesn't trigger layout or paint
+- `backface-visibility: hidden` improves rendering performance
+- Single transition property reduces calculation overhead
+</Tip>
+
+## Accessibility Notes
+
+### Keyboard Interaction
+
+The hover effect requires mouse interaction. Consider adding focus states:
+
+```scss
+.card:focus-within {
+  .card__side--front {
+    transform: rotateY(180deg);
+  }
+  
+  .card__side--back {
+    transform: rotateY(0);
+  }
+}
+```
+
+### Screen Readers
+
+Ensure both sides are accessible:
+
+```html
+<div class="card" aria-label="Tour card">
+  <div class="card__side card__side--front" aria-label="Tour details">
+    <!-- Front content -->
+  </div>
+  <div class="card__side card__side--back" aria-label="Pricing and booking">
+    <!-- Back content -->
+  </div>
+</div>
+```
+
+## Customization Examples
+
+### Changing Animation Duration
+
+```scss
+.card__side {
+  transition: transform 1.2s ease; // Slower flip
+}
+```
+
+### Adding New Color Variant
+
+```scss
+.card__side--back-4 {
+  background: linear-gradient(
+    to right bottom, 
+    #FF6B9D,  // Pink light
+    #C44569   // Pink dark
+  );
+}
+
+.card__picture--4 {
+  background-image: 
+    linear-gradient(to right bottom, #FF6B9D, #C44569), 
+    url(../img/your-image.jpg);
+}
+
+.card__heading-span--4 {
+  background: linear-gradient(
+    to right bottom, 
+    rgba(#FF6B9D, .85), 
+    rgba(#C44569, .85)
+  );
+}
+```
+
+### Changing Card Height
+
+```scss
+.card {
+  height: 60rem; // Taller cards
+}
+
+.card__side {
+  height: 60rem; // Must match container
+}
+```
+
+## Summary
+
+The card component showcases:
+- **3D CSS transforms** for realistic flip animations
+- **Perspective** for depth and dimension
+- **Absolute positioning** for layered content
+- **Gradient backgrounds** for visual richness
+- **Clip-path** for unique image shapes
+- **BEM naming** for component organization
+- **Color variants** through modifier classes
+
+This component is a perfect example of modern CSS capabilities, creating an engaging user experience without JavaScript.

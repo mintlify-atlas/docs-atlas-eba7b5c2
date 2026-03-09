@@ -1,0 +1,776 @@
+---
+title: Popup
+description: Modal overlay with smooth animations and multi-column text layout
+---
+
+## Overview
+
+The popup component creates a full-screen modal overlay for displaying important content like terms and conditions or detailed information. It features smooth scale animations, multi-column text layout, and uses the CSS `:target` pseudo-class for show/hide functionality without JavaScript.
+
+## Visual Behavior
+
+<Steps>
+  <Step title="Default State">
+    - Popup is invisible (`opacity: 0`, `visibility: hidden`)
+    - Content is scaled down (`scale(.25)`)
+    - No JavaScript required
+  </Step>
+  
+  <Step title="Trigger">
+    - User clicks a link with `href="#popup"`
+    - URL hash changes to `#popup`
+    - `:target` pseudo-class activates
+  </Step>
+  
+  <Step title="Open State">
+    - Backdrop fades in
+    - Content scales up from 0.25 to 1
+    - Smooth staggered animation
+  </Step>
+  
+  <Step title="Close">
+    - User clicks close button or backdrop
+    - Link points to `href="#section-tours"` (different hash)
+    - Popup fades out and scales down
+  </Step>
+</Steps>
+
+<Note>
+The `:target` pseudo-class matches when the element's ID matches the URL hash. This provides stateful behavior without JavaScript.
+</Note>
+
+## Complete Popup Structure
+
+```html index.html:362-378
+<div class="popup" id="popup">
+  <div class="popup__content">
+    <div class="popup__left">
+      <img src="img/nat-8.jpg" alt="Tour landscape" class="popup__img">
+      <img src="img/nat-9.jpg" alt="Tour landscape" class="popup__img">
+    </div>
+    <div class="popup__right">
+      <a href="#section-tours" class="popup__close">&times;</a>
+      <h2 class="heading-secondary u-margin-bottom-small">
+        Start booking now
+      </h2>
+      <h3 class="heading-tertiary u-margin-bottom-small">
+        Important &ndash; Please read these terms before booking
+      </h3>
+      <p class="popup__text">
+        Lorem ipsum dolor sit amet...
+      </p>
+      <a href="#" class="btn btn--green">Book now</a>
+    </div>
+  </div>
+</div>
+```
+
+## Popup Container
+
+The full-screen overlay backdrop:
+
+```scss sass/components/_popup.scss:4-14
+.popup {
+  height: 100vh;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba($color-black, .8);
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all .3s ease;
+}
+```
+
+### Container Properties
+
+<Tabs>
+  <Tab title="Positioning">
+    ```scss
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+    ```
+    
+    Fixed positioning covers the entire viewport, staying visible during scroll.
+  </Tab>
+  
+  <Tab title="Backdrop">
+    ```scss
+    background-color: rgba($color-black, .8);
+    z-index: 9999;
+    ```
+    
+    Semi-transparent black background (80% opacity) creates focus on content. Extremely high z-index ensures it appears above everything.
+  </Tab>
+  
+  <Tab title="Hidden State">
+    ```scss
+    opacity: 0;
+    visibility: hidden;
+    transition: all .3s ease;
+    ```
+    
+    Both opacity and visibility are needed:
+    - `opacity: 0` makes it invisible
+    - `visibility: hidden` prevents interaction
+    - Smooth 0.3s fade transition
+  </Tab>
+</Tabs>
+
+<Tip>
+**Why both opacity and visibility?** 
+
+`opacity: 0` alone keeps the element interactive (clickable). `visibility: hidden` removes it from the interaction tree, preventing accidental clicks when closed.
+</Tip>
+
+## Popup Content
+
+The white content box that scales in:
+
+```scss sass/components/_popup.scss:16-28
+&__content {
+  @include absCenter;
+  
+  width: 75%;
+  background-color: $color-white;
+  box-shadow: 0 2rem 4rem rgba($color-black, .2);
+  border-radius: 4px;
+  overflow: hidden;
+  display: table;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(.25);
+  transition: all .5s .2s ease;
+}
+```
+
+### Content Layout
+
+**Centering:**
+```scss
+@include absCenter;
+// Expands to:
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+```
+
+Perfectly centers the content box in the viewport.
+
+**Dimensions:**
+```scss
+width: 75%;  // Responsive width
+height: auto; // Height adapts to content
+```
+
+**Display:**
+```scss
+display: table;  // Enables table-cell children
+```
+
+Using CSS table layout allows the left/right columns to behave like table cells with automatic equal height.
+
+### Hidden State Transform
+
+```scss
+opacity: 0;
+transform: translate(-50%, -50%) scale(.25);
+```
+
+<Accordion title="Understanding the Transform">
+  The transform combines two operations:
+  
+  1. **translate(-50%, -50%)** - Maintains centering
+  2. **scale(.25)** - Shrinks to 25% size
+  
+  When visible, scale becomes 1 while maintaining the centering translation.
+</Accordion>
+
+### Staggered Animation
+
+```scss
+transition: all .5s .2s ease;
+```
+
+- **Duration:** 0.5s (longer than backdrop)
+- **Delay:** 0.2s (starts after backdrop begins)
+- **Result:** Backdrop fades in first, then content scales up
+
+<Note>
+The staggered timing creates a more polished, professional feel. The content doesn't appear until the backdrop is partially visible.
+</Note>
+
+## Content Columns
+
+### Left Column (Images)
+
+```scss sass/components/_popup.scss:30-33
+&__left {
+  width: 33.333333%;
+  display: table-cell;
+}
+```
+
+Takes up 1/3 of the content width. Using `table-cell` display ensures it matches the height of the right column.
+
+### Right Column (Text)
+
+```scss sass/components/_popup.scss:35-40
+&__right {
+  width: 66.6666667%;
+  display: table-cell;
+  vertical-align: middle;
+  padding: 3rem 5rem;
+}
+```
+
+**Layout:**
+- Takes up 2/3 of content width
+- `vertical-align: middle` centers content vertically
+- Generous padding (3rem top/bottom, 5rem sides)
+
+## Popup Images
+
+```scss sass/components/_popup.scss:42-45
+&__img {
+  display: block;
+  width: 100%;
+}
+```
+
+Images stack vertically, each taking full width of the left column.
+
+### HTML Usage
+
+```html
+<div class="popup__left">
+  <img src="img/nat-8.jpg" alt="Tour landscape" class="popup__img">
+  <img src="img/nat-9.jpg" alt="Tour landscape" class="popup__img">
+</div>
+```
+
+Two images displayed one above the other.
+
+## Multi-Column Text
+
+The text content uses CSS columns for newspaper-style layout:
+
+```scss sass/components/_popup.scss:47-63
+&__text {
+  font-size: 1.4rem;
+  margin-bottom: 4rem;
+
+  -moz-column-count: 2;
+  -moz-column-gap: 4rem;
+  -moz-column-rule: 1px solid $color-grey-light-2;
+  
+  column-count: 2;
+  column-gap: 4rem;
+  column-rule: 1px solid $color-grey-light-2;
+
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
+}
+```
+
+### Column Properties
+
+<CodeGroup>
+```scss Column Count
+column-count: 2;
+```
+
+```scss Column Gap
+column-gap: 4rem;  // 40px space between columns
+```
+
+```scss Column Rule
+column-rule: 1px solid $color-grey-light-2;
+// Vertical line between columns
+```
+
+```scss Hyphenation
+hyphens: auto;
+// Breaks long words at line endings
+```
+</CodeGroup>
+
+<Tip>
+**Hyphenation** (`hyphens: auto`) automatically breaks long words across lines with hyphens, preventing awkward spacing in narrow columns. Requires the `lang` attribute on the HTML element to work properly.
+</Tip>
+
+### Vendor Prefixes
+
+CSS columns require prefixes for full browser support:
+
+```scss
+-moz-column-count: 2;      // Firefox
+-moz-column-gap: 4rem;     // Firefox
+-moz-column-rule: 1px solid $color-grey-light-2;  // Firefox
+
+column-count: 2;           // Standard
+column-gap: 4rem;          // Standard
+column-rule: 1px solid $color-grey-light-2;       // Standard
+```
+
+## Open State (`:target`)
+
+When the popup's ID matches the URL hash:
+
+```scss sass/components/_popup.scss:66-74
+&:target {
+  opacity: 1;
+  visibility: visible;
+}
+
+&:target &__content {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+```
+
+### Backdrop Visible
+
+```scss
+&:target {
+  opacity: 1;
+  visibility: visible;
+}
+```
+
+When URL is `page.html#popup`, the backdrop fades in and becomes interactive.
+
+### Content Scales In
+
+```scss
+&:target &__content {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+```
+
+Content fades in and scales from 0.25 to 1 (full size) while maintaining center position.
+
+## Close Button
+
+The X button in the top-right corner:
+
+```scss sass/components/_popup.scss:76-93
+&__close {
+  &:link,
+  &:visited {
+    color: $color-grey-dark-1;
+    position: absolute;
+    top: .8rem;
+    right: 2.5rem;
+    font-size: 3rem;
+    text-decoration: none;
+    display: inline-block;
+    transition: all .2s ease;
+  }
+
+  &:hover {
+    color: $color-primary;
+    transform: scale(1.3);
+  }
+}
+```
+
+### Close Button Features
+
+**Content:**
+```html
+<a href="#section-tours" class="popup__close">&times;</a>
+```
+
+The `&times;` HTML entity displays as the × symbol.
+
+**Positioning:**
+```scss
+position: absolute;
+top: .8rem;
+right: 2.5rem;
+```
+
+Positioned in the top-right corner of the content box.
+
+**Hover Effect:**
+```scss
+color: $color-primary;      // Grey to green
+transform: scale(1.3);      // Grows 30%
+```
+
+Button grows and changes color on hover, making it clear it's interactive.
+
+### How Closing Works
+
+```html
+<a href="#section-tours" class="popup__close">&times;</a>
+```
+
+Clicking changes the URL hash from `#popup` to `#section-tours`, which:
+1. Removes the `:target` match from `.popup`
+2. Triggers the reverse transition
+3. Popup fades out and scales down
+4. Page scrolls to the tours section
+
+<Note>
+You can also close by clicking the backdrop. Add a click handler to the `.popup` container that changes the location hash.
+</Note>
+
+## Triggering the Popup
+
+Any link can open the popup by targeting its ID:
+
+### From Card Buttons
+
+```html index.html:168
+<a href="#popup" class="btn btn--white">Book now</a>
+```
+
+### From Text Links
+
+```html
+<a href="#popup">Read terms and conditions</a>
+```
+
+### From Buttons
+
+```html
+<button onclick="window.location.hash = 'popup'">
+  Open popup
+</button>
+```
+
+## Real-World Example
+
+Complete popup from the Natours booking flow:
+
+```html index.html:362-378
+<div class="popup" id="popup">
+  <div class="popup__content">
+    <div class="popup__left">
+      <img src="img/nat-8.jpg" alt="Tour landscape" class="popup__img">
+      <img src="img/nat-9.jpg" alt="Tour landscape" class="popup__img">
+    </div>
+    <div class="popup__right">
+      <a href="#section-tours" class="popup__close">&times;</a>
+      <h2 class="heading-secondary u-margin-bottom-small">
+        Start booking now
+      </h2>
+      <h3 class="heading-tertiary u-margin-bottom-small">
+        Important &ndash; Please read these terms before booking
+      </h3>
+      <p class="popup__text">
+        Lorem ipsum dolor sit amet. Qui quidem sapiente vel eius iste 
+        eum accusamus corporis eos dolore illum...
+      </p>
+      <a href="#" class="btn btn--green">Book now</a>
+    </div>
+  </div>
+</div>
+```
+
+**Triggered by:** Card "Book now" buttons
+
+**Purpose:** Display terms and conditions before booking
+
+**Actions:** Close (return to tours) or Book now
+
+## Animation Timeline
+
+<Steps>
+  <Step title="t = 0ms: User Clicks">
+    Link with `href="#popup"` is clicked
+    
+    URL changes to include `#popup` hash
+  </Step>
+  
+  <Step title="t = 0-300ms: Backdrop Fades In">
+    ```scss
+    .popup {
+      opacity: 0 → 1
+      visibility: hidden → visible
+      transition: all .3s
+    }
+    ```
+  </Step>
+  
+  <Step title="t = 200ms: Content Starts">
+    Content animation begins (0.2s delay)
+  </Step>
+  
+  <Step title="t = 200-700ms: Content Scales In">
+    ```scss
+    .popup__content {
+      opacity: 0 → 1
+      scale: .25 → 1
+      transition: all .5s .2s
+    }
+    ```
+  </Step>
+  
+  <Step title="t = 700ms: Animation Complete">
+    Popup fully visible and interactive
+  </Step>
+</Steps>
+
+## Browser Compatibility
+
+### :target Pseudo-class
+
+<Note>
+The `:target` pseudo-class has excellent browser support:
+- Chrome/Edge: Yes
+- Firefox: Yes
+- Safari: Yes
+- IE: 9+
+
+No fallback needed for modern browsers.
+</Note>
+
+### CSS Columns
+
+<Warning>
+CSS multi-column layout requires vendor prefixes:
+
+```scss
+-moz-column-count: 2;     // Firefox
+column-count: 2;          // Standard
+```
+
+Most modern browsers support the standard syntax, but prefixes ensure compatibility with older versions.
+</Warning>
+
+### CSS Hyphens
+
+```scss
+-webkit-hyphens: auto;  // Safari
+-moz-hyphens: auto;     // Firefox
+-ms-hyphens: auto;      // IE/Edge
+hyphens: auto;          // Standard
+```
+
+**Browser support:** Good with prefixes. Requires `lang` attribute on HTML element.
+
+## Accessibility Considerations
+
+### Keyboard Navigation
+
+Add focus trap to keep keyboard navigation within the popup:
+
+```javascript
+const popup = document.querySelector('.popup');
+const closeBtn = popup.querySelector('.popup__close');
+
+// Focus close button when popup opens
+if (window.location.hash === '#popup') {
+  closeBtn.focus();
+}
+
+// Close on Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && window.location.hash === '#popup') {
+    window.location.hash = '';
+  }
+});
+```
+
+### ARIA Attributes
+
+Improve screen reader support:
+
+```html
+<div class="popup" id="popup" role="dialog" 
+     aria-labelledby="popup-title" aria-modal="true">
+  <div class="popup__content">
+    <div class="popup__left">
+      <img src="img/nat-8.jpg" alt="Scenic mountain landscape" 
+           class="popup__img">
+      <img src="img/nat-9.jpg" alt="Forest hiking trail" 
+           class="popup__img">
+    </div>
+    <div class="popup__right">
+      <a href="#section-tours" class="popup__close" 
+         aria-label="Close popup">&times;</a>
+      <h2 class="heading-secondary u-margin-bottom-small" 
+          id="popup-title">
+        Start booking now
+      </h2>
+      <!-- content -->
+    </div>
+  </div>
+</div>
+```
+
+### Focus Management
+
+<Tip>
+**Best practice:** When the popup opens, move focus to the close button or first interactive element. When it closes, return focus to the element that opened it.
+</Tip>
+
+## JavaScript Enhancements
+
+### Close on Backdrop Click
+
+```javascript
+const popup = document.querySelector('.popup');
+
+popup.addEventListener('click', function(e) {
+  // Close if clicking the backdrop (not the content)
+  if (e.target === popup) {
+    window.location.hash = '';
+  }
+});
+```
+
+### Prevent Body Scroll
+
+```javascript
+// Disable body scroll when popup is open
+function toggleBodyScroll() {
+  if (window.location.hash === '#popup') {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
+  }
+}
+
+window.addEventListener('hashchange', toggleBodyScroll);
+toggleBodyScroll(); // Check on page load
+```
+
+## Customization Examples
+
+### Changing Animation Speed
+
+```scss
+.popup {
+  transition: all .5s ease;  // Slower backdrop
+}
+
+.popup__content {
+  transition: all .8s .3s ease;  // Slower content, longer delay
+}
+```
+
+### Different Scale Effect
+
+```scss
+.popup__content {
+  // Slide in from top instead of scale
+  transform: translate(-50%, -100%) scale(1);
+}
+
+.popup:target .popup__content {
+  transform: translate(-50%, -50%) scale(1);
+}
+```
+
+### Wider Content
+
+```scss
+.popup__content {
+  width: 90%;  // Wider popup
+  max-width: 1200px;  // But not too wide
+}
+```
+
+### Single Column Text
+
+```scss
+.popup__text {
+  column-count: 1;  // No columns
+  // or remove column properties entirely
+}
+```
+
+## Performance Notes
+
+<Tip>
+**GPU Acceleration:** The `transform` property (scale and translate) triggers hardware acceleration for smooth animations.
+
+**Efficient properties:**
+- `transform` - GPU accelerated
+- `opacity` - GPU accelerated
+- No layout recalculation required
+</Tip>
+
+**Optimization:**
+```scss
+.popup__content {
+  will-change: transform, opacity;  // Hint to browser
+}
+
+.popup:target .popup__content {
+  will-change: auto;  // Release after animation
+}
+```
+
+<Warning>
+Don't overuse `will-change` - only apply it to elements that will definitely animate, and remove it afterward to free GPU memory.
+</Warning>
+
+## Common Use Cases
+
+<Tabs>
+  <Tab title="Terms & Conditions">
+    Display legal text before user completes an action
+    
+    ```html
+    <a href="#terms-popup" class="btn">Review Terms</a>
+    ```
+  </Tab>
+  
+  <Tab title="Image Gallery">
+    Show full-size image with caption
+    
+    ```html
+    <a href="#image-1-popup">
+      <img src="thumb.jpg" alt="Thumbnail">
+    </a>
+    ```
+  </Tab>
+  
+  <Tab title="Video Player">
+    Embed video in centered modal
+    
+    ```html
+    <a href="#video-popup" class="play-button">
+      Watch Demo
+    </a>
+    ```
+  </Tab>
+  
+  <Tab title="Form">
+    Display contact or registration form
+    
+    ```html
+    <a href="#contact-popup" class="btn">
+      Contact Us
+    </a>
+    ```
+  </Tab>
+</Tabs>
+
+## Summary
+
+The popup component demonstrates:
+- **:target pseudo-class** for stateful CSS without JavaScript
+- **Staggered animations** for polished transitions
+- **Transform scale** for smooth entrance/exit effects
+- **CSS columns** for advanced text layout
+- **Table layout** for equal-height columns
+- **Absolute centering** with transform
+- **High z-index** for overlay stacking
+- **Opacity + visibility** for proper hiding
+- **BEM methodology** for organized structure
+
+This component shows how CSS alone can create sophisticated UI patterns traditionally requiring JavaScript, with the option to enhance with JS for improved accessibility and UX.

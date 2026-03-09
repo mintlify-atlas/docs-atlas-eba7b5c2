@@ -1,0 +1,415 @@
+---
+title: Buttons
+description: Button components with animations, variants, and hover effects
+---
+
+## Overview
+
+The Natours button component provides two main button types: solid buttons (`.btn`) for primary actions and text link buttons (`.btn-text`) for secondary actions. Both feature smooth animations and multiple visual states.
+
+## Button Types
+
+### Solid Buttons
+
+Solid buttons are the primary call-to-action components with elevated styling and hover animations.
+
+<CodeGroup>
+```html White Button
+<a href="#section-tours" class="btn btn--white btn--animated">
+  Discover our tours
+</a>
+```
+
+```html Green Button
+<a href="#" class="btn btn--green">
+  Discover all tours
+</a>
+```
+
+```html Button Element
+<button type="submit" class="btn btn--green">
+  Next step &rarr;
+</button>
+```
+</CodeGroup>
+
+### Text Link Buttons
+
+Text link buttons provide a subtler call-to-action, perfect for secondary actions.
+
+```html
+<a href="#" class="btn-text">Learn more &rarr;</a>
+```
+
+## Component Structure
+
+### Base Button Styles
+
+The `.btn` class provides the foundation for all solid buttons:
+
+```scss sass/components/_button.scss
+.btn {
+  &,
+  &:link, 
+  &:visited {
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 1.5rem 4rem;
+    display: inline-block;
+    border-radius: 10rem;
+    transition: all .2s ease;
+    position: relative;
+    font-size: $default-font-size;
+    white-space: nowrap;
+
+    // Change for the button element
+    border: none;
+    cursor: pointer;
+  }
+}
+```
+
+<Note>
+The button styles work for both `<a>` tags and `<button>` elements. The selector includes `:link` and `:visited` pseudo-classes for anchor tags, and resets default button styles with `border: none`.
+</Note>
+
+## Button States
+
+### Hover State
+
+Buttons lift up on hover with a shadow that creates depth:
+
+```scss
+&:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba($color-black, .2);
+
+  &:hover::after {
+    transform: scaleX(1.4) scaleY(1.6);
+    opacity: 0;
+  }
+}
+```
+
+**Visual effect:**
+- Button moves up by 3px
+- Shadow appears below creating elevation
+- Background pseudo-element scales out and fades
+
+### Active/Focus State
+
+When clicked or focused, the button slightly depresses:
+
+```scss
+&:active,
+&:focus {
+  outline: none;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 10px rgba($color-black, .2);
+}
+```
+
+**Visual effect:**
+- Button moves to -1px (less than hover)
+- Shadow reduces in size
+- Creates a "pressed" feeling
+
+## Pseudo-element Animation
+
+Buttons use an `::after` pseudo-element for the hover animation effect:
+
+```scss
+&::after {
+  content: "";
+  display: inline-block;
+  height: 100%;
+  width: 100%;
+  border-radius: 5rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  transition: all .4s ease;
+}
+```
+
+<Tip>
+The pseudo-element sits behind the button (`z-index: -1`) and has the same dimensions. On hover, it scales up and fades out, creating a ripple effect.
+</Tip>
+
+## Button Variants
+
+### White Button
+
+Light-colored button, typically used on dark backgrounds:
+
+```scss
+&--white {
+  background-color: $color-white;
+  color: $color-grey-dark-1;
+
+  &::after {
+    background-color: $color-white;
+  }
+}
+```
+
+**Usage:** Hero section CTAs, popup confirmations
+
+**Color values:**
+- Background: `#FFF`
+- Text: `#777` (grey-dark-1)
+
+### Green Button
+
+Primary brand-colored button for main actions:
+
+```scss
+&--green {
+  background-color: $color-primary;
+  color: $color-white;
+
+  &::after {
+    background-color: $color-primary;
+  }
+}
+```
+
+**Usage:** Form submissions, primary CTAs, tour cards
+
+**Color values:**
+- Background: `#55C57A` (primary green)
+- Text: `#FFF`
+
+### Animated Button
+
+Adds an entrance animation for hero buttons:
+
+```scss
+&--animated {
+  animation: moveInBottom .5s ease .75s;
+  animation-fill-mode: backwards;
+}
+```
+
+<Note>
+The `moveInBottom` animation is defined in `sass/base/_animations.scss`. The animation:
+- Duration: 0.5s
+- Delay: 0.75s (appears after heading animates)
+- Fill mode: `backwards` (applies starting styles during delay)
+</Note>
+
+## Text Link Buttons
+
+The `.btn-text` class creates subtle, animated text links:
+
+```scss
+.btn-text {
+  &:link,
+  &:visited {
+    font-size: $default-font-size;
+    color: $color-primary;
+    display: inline-block;
+    text-decoration: none;
+    border-bottom: 1px solid $color-primary;
+    padding: .5rem 1rem;
+    transition: all .2s ease;
+  }
+
+  &:hover {
+    background-color: $color-primary;
+    color: $color-white;
+    box-shadow: 0 1rem 2rem rgba($color-black, .15);
+    transform: translateY(-3px);
+  }
+
+  &:active {
+    box-shadow: 0 .5rem 1rem rgba($color-black, .15);
+    transform: translateY(0);
+  }
+}
+```
+
+### Visual Behavior
+
+<Steps>
+  <Step title="Default State">
+    Text appears in primary green with a bottom border. Simple and clean.
+  </Step>
+  
+  <Step title="Hover State">
+    Background fills with green color, text turns white, slight elevation with shadow.
+  </Step>
+  
+  <Step title="Active State">
+    Returns to baseline position with reduced shadow for press feedback.
+  </Step>
+</Steps>
+
+## Real-World Usage Examples
+
+### Hero Section
+
+```html index.html:57
+<div class="header__text-box">
+  <h1 class="heading-primary">
+    <span class="heading-primary--main">Outdoors</span>
+    <span class="heading-primary--sub">is where life happens</span>
+  </h1>
+
+  <a href="#section-tours" class="btn btn--white btn--animated">
+    Discover our tours
+  </a>
+</div>
+```
+
+### Card Call-to-Action
+
+```html index.html:168
+<div class="card__side card__side--back card__side--back-1">
+  <div class="card__cta">
+    <div class="cta__price-box">
+      <p class="card__price-only">Only</p>
+      <p class="card__price-value">$297</p>
+    </div>
+    <a href="#popup" class="btn btn--white">Book now</a>
+  </div>
+</div>
+```
+
+### Section Call-to-Action
+
+```html index.html:236
+<div class="u-center-text u-margin-top-huge">
+  <a href="#" class="btn btn--green">Discover all tours</a>
+</div>
+```
+
+### Text Link
+
+```html index.html:81
+<a href="#" class="btn-text">Learn more &rarr;</a>
+```
+
+### Form Submit Button
+
+```html index.html:327
+<div class="form__group">
+  <button type="submit" class="btn btn--green">
+    Next step &rarr;
+  </button>
+</div>
+```
+
+## Styling Details
+
+### Border Radius
+
+```scss
+border-radius: 10rem; // Creates pill-shaped buttons
+```
+
+The large border-radius value (100px) creates perfectly rounded ends regardless of button size.
+
+### Padding
+
+```scss
+padding: 1.5rem 4rem; // Vertical: 15px, Horizontal: 40px
+```
+
+Generous horizontal padding ensures buttons are touch-friendly and visually balanced.
+
+### Typography
+
+```scss
+text-transform: uppercase;
+font-size: $default-font-size; // 1.6rem (16px)
+```
+
+All solid buttons use uppercase text for emphasis and consistency.
+
+### Transitions
+
+```scss
+transition: all .2s ease;  // Button transforms
+transition: all .4s ease;  // Pseudo-element scales
+```
+
+<Tip>
+The pseudo-element has a longer transition (0.4s vs 0.2s) creating a trailing effect that enhances the animation.
+</Tip>
+
+## Accessibility Considerations
+
+<Warning>
+**Focus States:** The `:focus` selector removes the default outline. Ensure your design provides sufficient visual feedback for keyboard navigation.
+
+```scss
+&:focus {
+  outline: none;  // Consider adding a custom focus indicator
+  transform: translateY(-1px);
+  box-shadow: 0 5px 10px rgba($color-black, .2);
+}
+```
+</Warning>
+
+### Recommendations
+
+1. **Keyboard Navigation:** The transform and shadow changes provide visual feedback for focus states
+2. **Color Contrast:** Both button variants maintain WCAG AA contrast ratios
+3. **Click Targets:** Minimum padding ensures buttons meet 44x44px touch target size
+4. **Semantic HTML:** Use `<button>` for actions, `<a>` for navigation
+
+## Customization
+
+### Creating New Color Variants
+
+Follow the BEM modifier pattern:
+
+```scss
+.btn {
+  &--blue {
+    background-color: $color-tertiary-light;
+    color: $color-white;
+    
+    &::after {
+      background-color: $color-tertiary-light;
+    }
+  }
+}
+```
+
+### Adjusting Animation Timing
+
+```scss
+.btn {
+  &:link,
+  &:visited {
+    transition: all .3s ease; // Slower transition
+  }
+  
+  &::after {
+    transition: all .6s ease; // Slower ripple effect
+  }
+}
+```
+
+## Performance Notes
+
+<Tip>
+**GPU Acceleration:** The `transform` property triggers GPU acceleration for smooth animations without repaints. This is more performant than animating `top` or `margin` properties.
+</Tip>
+
+**Browser Compatibility:**
+- Transform: All modern browsers
+- Transition: All modern browsers
+- Pseudo-elements: All browsers including IE9+
+
+## Summary
+
+The button component demonstrates:
+- **BEM methodology** for clear, maintainable class names
+- **Pseudo-elements** for animation effects without extra markup
+- **Transform-based animations** for optimal performance
+- **Multiple states** for rich user interaction feedback
+- **Flexible variants** for different contexts and emphasis levels

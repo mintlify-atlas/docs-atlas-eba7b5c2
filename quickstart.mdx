@@ -1,80 +1,322 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: "Quickstart Guide"
+description: "Get up and running with Natours in minutes. Learn how to set up the project, compile Sass, and view the landing page locally."
 ---
 
-## Get started in three steps
+## Welcome to Natours
 
-Get your documentation site running locally and make your first customization.
-
-### Step 1: Set up your local environment
-
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 2: Deploy your changes
-
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
-
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
-
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 3: Go live
-
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
-
-## Next steps
-
-Now that you have your docs running, explore these key features:
-
-<CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
-</CardGroup>
+Natours is a modern landing page for an adventure tour company, built with advanced CSS and Sass techniques. This quickstart guide will help you get the project running on your local machine in just a few minutes.
 
 <Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
+  Natours is a static website built with HTML, CSS/Sass, and vanilla JavaScript. No complex build tools or frameworks required - just compile the Sass and open the HTML file in your browser!
+</Note>
+
+## Prerequisites
+
+Before you begin, make sure you have the following installed on your machine:
+
+- **Node.js** (v14 or higher) - Required for the Sass compiler
+- **npm** - Comes bundled with Node.js
+- A modern web browser (Chrome, Firefox, Safari, or Edge)
+
+<Tip>
+  Check if Node.js is installed by running `node --version` in your terminal. If not installed, download it from [nodejs.org](https://nodejs.org).
+</Tip>
+
+## Getting Started
+
+<Steps>
+  <Step title="Clone the Repository">
+    First, clone the Natours repository to your local machine:
+
+    <CodeGroup>
+      ```bash HTTPS
+      git clone https://github.com/marcosprofile/natours.git
+      cd natours
+      ```
+
+      ```bash SSH
+      git clone git@github.com:marcosprofile/natours.git
+      cd natours
+      ```
+    </CodeGroup>
+
+    This creates a `natours` directory with all the project files.
+  </Step>
+
+  <Step title="Install Dependencies">
+    Install the required npm packages, which includes the Sass compiler:
+
+    ```bash
+    npm install
+    ```
+
+    This installs:
+    - **sass** (^1.92.1) - The Sass compiler for compiling `.scss` files to CSS
+
+    <Note>
+      The project uses Sass (Dart Sass) to compile stylesheets. This is the only build dependency you need.
+    </Note>
+  </Step>
+
+  <Step title="Compile Sass to CSS">
+    Compile the Sass files to CSS using the build script:
+
+    ```bash
+    npm run compile:sass
+    ```
+
+    This command:
+    - Compiles `sass/main.scss` into `css/style.css`
+    - Watches for file changes with the `-w` flag
+    - Automatically recompiles when you save changes to any `.scss` file
+
+    <Warning>
+      Keep this terminal window open while developing. The watch mode (`-w`) ensures your CSS updates automatically as you modify Sass files.
+    </Warning>
+
+    You should see output similar to:
+    ```
+    Compiled sass/main.scss to css/style.css.
+    Sass is watching for changes. Press Ctrl-C to stop.
+    ```
+  </Step>
+
+  <Step title="Open in Browser">
+    Open the `index.html` file in your web browser:
+
+    <CodeGroup>
+      ```bash macOS
+      open index.html
+      ```
+
+      ```bash Linux
+      xdg-open index.html
+      ```
+
+      ```bash Windows
+      start index.html
+      ```
+    </CodeGroup>
+
+    Or simply navigate to the project directory in your file explorer and double-click `index.html`.
+
+    <Tip>
+      For the best development experience, use a live server extension in your code editor (like Live Server in VS Code) to automatically refresh the page when files change.
+    </Tip>
+  </Step>
+</Steps>
+
+## Project Structure
+
+Understanding the project structure will help you navigate and modify the codebase:
+
+```
+natours/
+├── css/                    # Compiled CSS output
+│   ├── style.css          # Main compiled stylesheet
+│   └── icon-font.css      # Icon font styles
+├── img/                    # Images and media files
+│   ├── logo-white.png     # Header logo
+│   ├── nat-1.jpg          # Nature photos
+│   ├── video.mp4          # Background video
+│   └── ...                # Tour cards, backgrounds, etc.
+├── sass/                   # Sass source files
+│   ├── abstracts/         # Variables, mixins, functions
+│   │   ├── _variables.scss # Color palette, grid settings
+│   │   ├── _mixins.scss   # Reusable Sass mixins
+│   │   └── _functions.scss # Custom Sass functions
+│   ├── base/              # Base styles and resets
+│   │   ├── _base.scss     # Reset and base element styles
+│   │   ├── _animations.scss # Keyframe animations
+│   │   ├── _typography.scss # Text and heading styles
+│   │   └── _utilities.scss # Utility classes
+│   ├── components/        # UI components
+│   │   ├── _button.scss   # Button styles
+│   │   ├── _card.scss     # Tour card components
+│   │   ├── _form.scss     # Form and input styles
+│   │   ├── _popup.scss    # Modal popup
+│   │   ├── _story.scss    # Customer story cards
+│   │   └── layout/        # Layout components
+│   │       ├── _header.scss    # Hero header
+│   │       ├── _footer.scss    # Footer section
+│   │       ├── _navigation.scss # Nav menu
+│   │       └── _grid.scss      # Grid system
+│   └── main.scss          # Main Sass entry point
+├── index.html             # Main HTML file
+└── package.json           # Project dependencies
+```
+
+### Key Files Explained
+
+<CardGroup cols={2}>
+  <Card title="index.html" icon="file-code" href="/concepts/architecture">
+    The main HTML file containing all the page content and structure. Located at the project root.
+  </Card>
+
+  <Card title="sass/main.scss" icon="palette" href="/concepts/sass-structure">
+    The Sass entry point that imports all other stylesheets using the modern `@use` syntax.
+  </Card>
+
+  <Card title="sass/abstracts/_variables.scss" icon="sliders" href="/styling/colors-variables">
+    Global variables including the color palette, font sizes, and grid settings.
+  </Card>
+
+  <Card title="css/style.css" icon="file-css" href="/concepts/sass-structure">
+    Auto-generated compiled CSS. Never edit this file directly - modify the Sass files instead.
+  </Card>
+</CardGroup>
+
+## Understanding the Sass Architecture
+
+Natours uses a modular Sass architecture based on the 7-1 pattern. The `sass/main.scss` file imports all modules:
+
+```scss sass/main.scss
+@use "./abstracts/functions";
+@use "./abstracts/mixins";
+@use "./abstracts/variables";
+
+@use "./base/animations";
+@use "./base/base";
+@use "./base/typography";
+@use "./base/utilities";
+
+@use "./components/button";
+@use "./components/composition";
+@use "./components/feature-box";
+@use "./components/card";
+@use "./components/story";
+@use "./components/bg-video";
+@use "./components/form";
+@use "./components/popup";
+
+@use "./components/layout/navigation";
+@use "./components/layout/header";
+@use "./components/layout/grid";
+@use "./components/layout/footer";
+
+@use "./components/pages/home";
+```
+
+### Design System
+
+The project uses a consistent design system defined in `sass/abstracts/_variables.scss`:
+
+```scss sass/abstracts/_variables.scss
+// Color Palette
+$color-primary: #55C57A;        // Main brand green
+$color-primary-light: #7ED56F;  // Light green
+$color-primary-dark: #28B485;   // Dark green
+
+$color-secondary-light: #FFB900; // Orange for accents
+$color-secondary-dark: #FF7730;  // Deep orange
+
+$color-tertiary-light: #2998FF;  // Blue for cards
+$color-tertiary-dark: #5643FA;   // Purple for cards
+
+// Typography
+$default-font-size: 1.6rem;
+
+// Grid System
+$grid-width: 114rem;
+$gutter-vertical: 8rem;
+$gutter-horizontal: 6rem;
+```
+
+## Viewing the Website
+
+Once you've completed the setup steps, you should see:
+
+1. **Hero Header** - Stunning hero section with animated text and CTA button
+2. **About Section** - Information about tours with image composition
+3. **Features Section** - Four key benefits with icons on a skewed background
+4. **Tours Section** - Three flip cards showcasing popular tours
+5. **Stories Section** - Customer testimonials with background video
+6. **Booking Section** - Contact form with custom styled inputs
+7. **Footer** - Links and copyright information
+8. **Navigation Menu** - Animated hamburger menu with smooth transitions
+
+<Tip>
+  Try clicking the hamburger menu icon in the top-right corner to see the animated navigation drawer!
+</Tip>
+
+## Development Workflow
+
+Here's a typical development workflow:
+
+<Steps>
+  <Step title="Start the Sass compiler">
+    ```bash
+    npm run compile:sass
+    ```
+    Leave this running in a terminal window to watch for changes.
+  </Step>
+
+  <Step title="Open the HTML file">
+    Open `index.html` in your browser or use a live server.
+  </Step>
+
+  <Step title="Make changes">
+    Edit Sass files in the `sass/` directory. The compiler will automatically regenerate `css/style.css`.
+  </Step>
+
+  <Step title="Refresh browser">
+    Refresh your browser to see the changes (or use auto-reload with a live server).
+  </Step>
+</Steps>
+
+## Common Issues
+
+<Warning>
+  **Issue:** Sass compiler not found or `npm run compile:sass` fails
+  
+  **Solution:** Make sure you ran `npm install` first. If the issue persists, try deleting `node_modules` and `package-lock.json`, then run `npm install` again.
+</Warning>
+
+<Warning>
+  **Issue:** CSS changes not appearing in the browser
+  
+  **Solution:** 
+  1. Check that the Sass compiler is running (`npm run compile:sass`)
+  2. Hard refresh your browser (Ctrl+Shift+R or Cmd+Shift+R)
+  3. Check the browser console for errors
+  4. Verify `css/style.css` was updated (check the file timestamp)
+</Warning>
+
+<Warning>
+  **Issue:** Images or fonts not loading
+  
+  **Solution:** Make sure you're viewing the page with the correct relative paths. If using a live server, start it from the project root directory.
+</Warning>
+
+## Next Steps
+
+Now that you have Natours running locally, here's what to explore next:
+
+<CardGroup cols={2}>
+  <Card title="Customize Colors" icon="palette" href="/styling/colors-variables">
+    Learn how to modify the color scheme and create your own brand palette
+  </Card>
+
+  <Card title="Sass Architecture" icon="folder-tree" href="/concepts/sass-structure">
+    Deep dive into the modular Sass structure and BEM naming conventions
+  </Card>
+
+  <Card title="Components Guide" icon="puzzle-piece" href="/components/overview">
+    Explore each component: buttons, cards, forms, and more
+  </Card>
+
+  <Card title="Animations" icon="wand-magic-sparkles" href="/styling/animations">
+    Understand the CSS animations and how to create your own effects
+  </Card>
+</CardGroup>
+
+## Additional Resources
+
+- **Repository**: [github.com/marcosprofile/natours](https://github.com/marcosprofile/natours)
+- **Original Course**: [Advanced CSS and Sass on Udemy](https://www.udemy.com/course/advanced-css-and-sass/)
+- **Sass Documentation**: [sass-lang.com](https://sass-lang.com/documentation/)
+
+<Note>
+  This project was created as part of Jonas Schmedtmann's Advanced CSS and Sass course. It demonstrates modern CSS techniques including Flexbox, CSS Grid, animations, Sass architecture, and responsive design.
 </Note>

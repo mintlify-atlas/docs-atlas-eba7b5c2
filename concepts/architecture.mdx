@@ -1,0 +1,253 @@
+---
+title: Architecture Overview
+description: Understanding the Natours project architecture and the 7-1 Sass pattern
+icon: sitemap
+---
+
+## Project Architecture
+
+Natours is built using a modern, scalable Sass architecture following the **7-1 pattern**. This architectural approach organizes stylesheets into seven distinct folders and one main file that imports them all.
+
+<Note>
+The 7-1 pattern is a widely-adopted architecture for large-scale Sass projects, providing clear separation of concerns and making the codebase easy to navigate and maintain.
+</Note>
+
+## Directory Structure
+
+The Natours project follows a modified 7-1 pattern with the following structure:
+
+```plaintext
+sass/
+├── abstracts/
+│   ├── _functions.scss
+│   ├── _mixins.scss
+│   └── _variables.scss
+├── base/
+│   ├── _animations.scss
+│   ├── _base.scss
+│   ├── _typography.scss
+│   └── _utilities.scss
+├── components/
+│   ├── _bg-video.scss
+│   ├── _button.scss
+│   ├── _card.scss
+│   ├── _composition.scss
+│   ├── _feature-box.scss
+│   ├── _form.scss
+│   ├── _popup.scss
+│   ├── _story.scss
+│   └── layout/
+│       ├── _footer.scss
+│       ├── _grid.scss
+│       ├── _header.scss
+│       └── _navigation.scss
+│   └── pages/
+│       └── _home.scss
+└── main.scss
+```
+
+## The 7-1 Pattern Explained
+
+<Steps>
+  <Step title="Abstracts Layer">
+    Contains Sass tools and helpers that don't output CSS by themselves. This includes variables, functions, and mixins.
+    
+    **Files in Natours:**
+    - `_variables.scss` - Color palette, font sizes, grid settings
+    - `_mixins.scss` - Reusable mixins like `clearfix`, `absCenter`, and `respond`
+    - `_functions.scss` - Custom Sass functions (currently empty but ready for future use)
+  </Step>
+
+  <Step title="Base Layer">
+    Contains the foundational styles that apply globally across the project.
+    
+    **Files in Natours:**
+    - `_base.scss` - CSS reset and global box-sizing
+    - `_typography.scss` - Typography definitions (headings, paragraphs)
+    - `_animations.scss` - Keyframe animations
+    - `_utilities.scss` - Utility classes for spacing and alignment
+  </Step>
+
+  <Step title="Components Layer">
+    Contains all reusable UI components. Each component is self-contained in its own file.
+    
+    **Files in Natours:**
+    - `_button.scss` - Button styles and variants
+    - `_card.scss` - Flip card component
+    - `_form.scss` - Form inputs and controls
+    - `_feature-box.scss` - Feature box component
+    - And more...
+  </Step>
+
+  <Step title="Layout Layer">
+    Contains styles for major layout components that structure the page.
+    
+    **Files in Natours:**
+    - `layout/_header.scss` - Header section
+    - `layout/_footer.scss` - Footer section
+    - `layout/_navigation.scss` - Navigation menu
+    - `layout/_grid.scss` - Grid system
+  </Step>
+
+  <Step title="Pages Layer">
+    Contains page-specific styles that only apply to individual pages.
+    
+    **Files in Natours:**
+    - `pages/_home.scss` - Home page specific styles
+  </Step>
+</Steps>
+
+<Tip>
+In the Natours implementation, the layout and pages folders are nested within the components directory for organizational purposes, which is a valid variation of the 7-1 pattern.
+</Tip>
+
+## Module System
+
+Natours uses the modern Sass module system with `@use` directives instead of the older `@import` approach. This provides better namespacing and prevents naming conflicts.
+
+### Main Entry Point
+
+The `main.scss` file serves as the single entry point that imports all partial files:
+
+```scss main.scss
+@use "./abstracts/functions";
+@use "./abstracts/mixins";
+@use "./abstracts/variables";
+
+@use "./base/animations";
+@use "./base/base";
+@use "./base/typography";
+@use "./base/utilities";
+
+@use "./components/button";
+@use "./components/composition";
+@use "./components/feature-box";
+@use "./components/card";
+@use "./components/story";
+@use "./components/bg-video";
+@use "./components/form";
+@use "./components/popup";
+
+@use "./components/layout/navigation";
+@use "./components/layout/header";
+@use "./components/layout/grid";
+@use "./components/layout/footer";
+
+@use "./components/pages/home";
+```
+
+## How Components Connect
+
+<CardGroup cols={2}>
+  <Card title="Abstracts → Components" icon="arrow-right">
+    Components import abstracts to access variables and mixins. This creates a dependency flow where abstracts are the foundation.
+    
+    ```scss
+    @use "../abstracts/variables" as *;
+    @use "../abstracts/mixins" as *;
+    ```
+  </Card>
+
+  <Card title="Base → Global Styles" icon="globe">
+    Base styles apply globally and set up the foundation for all components. They import abstracts for responsive design.
+    
+    ```scss
+    @use "../abstracts/mixins" as *;
+    
+    html {
+      @include respond(tab-land) {
+        font-size: 56.25%;
+      }
+    }
+    ```
+  </Card>
+</CardGroup>
+
+## Real-World Example: Button Component
+
+Here's how the architecture works in practice with the button component:
+
+```scss components/_button.scss
+@use "../abstracts/variables" as *;
+
+.btn {
+  &,
+  &:link, 
+  &:visited {
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 1.5rem 4rem;
+    display: inline-block;
+    border-radius: 10rem;
+    transition: all .2s ease;
+    position: relative;
+    font-size: $default-font-size; // From variables
+    border: none;
+    cursor: pointer;
+  }
+
+  &--white {
+    background-color: $color-white; // From variables
+    color: $color-grey-dark-1;     // From variables
+  }
+  
+  &--green {
+    background-color: $color-primary; // From variables
+    color: $color-white;
+  }
+}
+```
+
+<Note>
+The button component imports variables using `@use "../abstracts/variables" as *` which allows it to access all color and sizing variables defined in the abstracts layer.
+</Note>
+
+## Architecture Benefits
+
+<CardGroup cols={3}>
+  <Card title="Maintainability" icon="wrench">
+    Each component is isolated in its own file, making updates and debugging straightforward.
+  </Card>
+
+  <Card title="Scalability" icon="chart-line">
+    New components can be added without affecting existing code. Simply create a new file and import it.
+  </Card>
+
+  <Card title="Reusability" icon="recycle">
+    Abstracts (variables, mixins) are shared across all components, ensuring consistency.
+  </Card>
+</CardGroup>
+
+## Build Process
+
+The project uses the Dart Sass compiler to transform the modular Sass files into a single CSS file:
+
+```json package.json
+{
+  "scripts": {
+    "compile:sass": "sass sass/main.scss css/style.css -w"
+  }
+}
+```
+
+This command:
+- Takes `sass/main.scss` as input
+- Compiles all imported files
+- Outputs to `css/style.css`
+- Watches for changes with the `-w` flag
+
+<Warning>
+The order of imports in `main.scss` matters. Abstracts must be imported first since other files depend on them. Base styles should come before components.
+</Warning>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Sass Structure" icon="folder-tree" href="/concepts/sass-structure">
+    Learn about the module system and file organization in detail
+  </Card>
+  
+  <Card title="Responsive Design" icon="mobile" href="/concepts/responsive-design">
+    Explore the responsive design system and breakpoint management
+  </Card>
+</CardGroup>

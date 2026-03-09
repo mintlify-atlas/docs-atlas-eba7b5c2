@@ -1,0 +1,384 @@
+---
+title: 'Colors & Variables'
+description: 'Color system and SASS variables in Natours'
+icon: 'palette'
+---
+
+## Overview
+
+Natours uses a comprehensive SASS variable system defined in `sass/abstracts/_variables.scss`. The color palette is carefully chosen to reflect the outdoor adventure theme, with a vibrant green primary color and warm gradient accents.
+
+## Color System
+
+### Primary Colors
+
+The primary green color scheme is used throughout the application for main actions, links, and brand identity.
+
+```scss sass/abstracts/_variables.scss
+$color-primary: #55C57A;
+$color-primary-light: #7ED56F;
+$color-primary-dark: #28B485;
+```
+
+<CardGroup cols={3}>
+  <Card title="Primary" icon="circle">
+    `#55C57A`
+    
+    Main brand color used for buttons, links, and key UI elements
+  </Card>
+  
+  <Card title="Primary Light" icon="circle">
+    `#7ED56F`
+    
+    Lighter shade for gradients and hover states
+  </Card>
+  
+  <Card title="Primary Dark" icon="circle">
+    `#28B485`
+    
+    Darker shade for gradients and depth
+  </Card>
+</CardGroup>
+
+**Usage Example:**
+
+```scss
+.btn--green {
+  background-color: $color-primary;
+  color: $color-white;
+}
+
+.header {
+  background-image: linear-gradient(
+    to right bottom,
+    rgba($color-primary-light, 0.8),
+    rgba($color-primary-dark, 0.8)
+  );
+}
+```
+
+### Secondary Colors
+
+Warm orange gradient colors used for accent elements and visual variety.
+
+```scss sass/abstracts/_variables.scss
+$color-secondary-light: #FFB900;
+$color-secondary-dark: #FF7730;
+```
+
+<Tip>
+  Secondary colors are typically used in gradient backgrounds for cards and featured sections to create visual hierarchy.
+</Tip>
+
+**Usage Example:**
+
+```scss
+.card--secondary {
+  background-image: linear-gradient(
+    to right bottom,
+    $color-secondary-light,
+    $color-secondary-dark
+  );
+}
+```
+
+### Tertiary Colors
+
+Blue to purple gradient colors for additional visual interest.
+
+```scss sass/abstracts/_variables.scss
+$color-tertiary-light: #2998FF;
+$color-tertiary-dark: #5643FA;
+```
+
+### Grey Scale
+
+A comprehensive grey palette for text, backgrounds, and UI elements.
+
+<Tabs>
+  <Tab title="Light Greys">
+    ```scss sass/abstracts/_variables.scss
+    $color-grey-light-1: #F7F7F7;
+    $color-grey-light-2: #EEE;
+    ```
+    
+    **Usage:**
+    - `$color-grey-light-1`: Section backgrounds, subtle containers
+    - `$color-grey-light-2`: Borders, dividers, input backgrounds
+  </Tab>
+  
+  <Tab title="Dark Greys">
+    ```scss sass/abstracts/_variables.scss
+    $color-grey-dark-1: #777;
+    $color-grey-dark-2: #999;
+    $color-grey-dark-3: #333;
+    ```
+    
+    **Usage:**
+    - `$color-grey-dark-1`: Body text, primary content
+    - `$color-grey-dark-2`: Secondary text, captions
+    - `$color-grey-dark-3`: Headings, emphasis text
+  </Tab>
+</Tabs>
+
+**Usage Example:**
+
+```scss sass/base/_typography.scss
+body {
+  font-family: 'Lato', sans-serif;
+  font-weight: 400;
+  line-height: 1.7;
+  color: $color-grey-dark-1;
+  padding: 2rem;
+}
+```
+
+### Base Colors
+
+Pure black and white for maximum contrast and special use cases.
+
+```scss sass/abstracts/_variables.scss
+$color-white: #FFF;
+$color-black: #000;
+```
+
+<Note>
+  Black and white are typically used in `rgba()` functions for shadows and overlays rather than solid colors:
+  
+  ```scss
+  box-shadow: 0 1rem 2rem rgba($color-black, .15);
+  ```
+</Note>
+
+## Color Naming Convention
+
+Natours follows a semantic naming pattern for color variables:
+
+<Steps>
+  <Step title="Color Family">
+    `$color-primary`, `$color-secondary`, `$color-tertiary`, `$color-grey`
+  </Step>
+  
+  <Step title="Variation">
+    `-light`, `-dark`, or numbered variations like `-1`, `-2`, `-3`
+  </Step>
+  
+  <Step title="Full Variable Name">
+    `$color-primary-light`, `$color-grey-dark-2`
+  </Step>
+</Steps>
+
+This system allows for:
+- **Consistency**: Easy to remember and predictable names
+- **Scalability**: Simple to add new color variations
+- **Maintenance**: Change colors globally by updating variables
+
+## Typography Variables
+
+### Font Size
+
+The default font size is used consistently across body text and paragraphs.
+
+```scss sass/abstracts/_variables.scss
+$default-font-size: 1.6rem;
+```
+
+<Warning>
+  Font sizes in Natours use `rem` units based on a 10px root font size. This means:
+  - `1rem = 10px`
+  - `1.6rem = 16px`
+  - `3.5rem = 35px`
+</Warning>
+
+**Usage Example:**
+
+```scss sass/base/_typography.scss
+.heading-tertiary {
+  font-size: $default-font-size;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.paragraph {
+  font-size: $default-font-size;
+
+  &:not(:last-child) {
+    margin-bottom: 3rem;
+  }
+}
+```
+
+## Layout Variables
+
+### Grid System
+
+Natours uses a custom grid system with configurable width and gutter sizes.
+
+```scss sass/abstracts/_variables.scss
+$grid-width: 114rem;
+$gutter-vertical: 8rem;
+$gutter-horizontal: 6rem;
+```
+
+<CardGroup cols={3}>
+  <Card title="Grid Width" icon="arrows-left-right">
+    `114rem` (1140px)
+    
+    Maximum width for content containers
+  </Card>
+  
+  <Card title="Vertical Gutter" icon="arrows-up-down">
+    `8rem` (80px)
+    
+    Spacing between horizontal rows
+  </Card>
+  
+  <Card title="Horizontal Gutter" icon="arrows-left-right">
+    `6rem` (60px)
+    
+    Spacing between vertical columns
+  </Card>
+</CardGroup>
+
+**Usage Example:**
+
+```scss
+.row {
+  max-width: $grid-width;
+  margin: 0 auto;
+
+  &:not(:last-child) {
+    margin-bottom: $gutter-vertical;
+  }
+
+  .col {
+    float: left;
+
+    &:not(:last-child) {
+      margin-right: $gutter-horizontal;
+    }
+  }
+}
+```
+
+## Using Variables
+
+### Importing Variables
+
+Variables must be imported using the SASS module system:
+
+```scss
+@use "../abstracts/variables" as *;
+```
+
+The `as *` syntax makes all variables available without a namespace prefix.
+
+### Color Functions
+
+SASS color functions work seamlessly with Natours variables:
+
+<Tabs>
+  <Tab title="Transparency">
+    ```scss
+    background-color: rgba($color-primary, 0.8);
+    box-shadow: 0 1rem 2rem rgba($color-black, .2);
+    ```
+  </Tab>
+  
+  <Tab title="Gradients">
+    ```scss
+    background-image: linear-gradient(
+      to right,
+      $color-primary-light,
+      $color-primary-dark
+    );
+    ```
+  </Tab>
+  
+  <Tab title="Darken/Lighten">
+    ```scss
+    background-color: darken($color-primary, 10%);
+    border-color: lighten($color-grey-dark-1, 20%);
+    ```
+  </Tab>
+</Tabs>
+
+## Variable Structure
+
+Complete variable reference from `sass/abstracts/_variables.scss`:
+
+```scss sass/abstracts/_variables.scss
+// COLORS
+
+$color-primary: #55C57A;
+$color-primary-light: #7ED56F;
+$color-primary-dark: #28B485;
+
+$color-secondary-light: #FFB900;
+$color-secondary-dark: #FF7730;
+
+$color-tertiary-light: #2998FF;
+$color-tertiary-dark: #5643FA;
+
+$color-grey-light-1: #F7F7F7;
+$color-grey-light-2: #EEE;
+
+$color-grey-dark-1: #777;
+$color-grey-dark-2: #999;
+$color-grey-dark-3: #333;
+
+$color-white: #FFF;
+$color-black: #000;
+
+// FONT
+$default-font-size: 1.6rem;
+
+// GRID
+$grid-width: 114rem;
+$gutter-vertical: 8rem;
+$gutter-horizontal: 6rem;
+```
+
+## Best Practices
+
+<Steps>
+  <Step title="Always Use Variables">
+    Never hardcode color values in component files. Always reference variables:
+    
+    ```scss
+    // ✅ Good
+    color: $color-primary;
+    
+    // ❌ Bad
+    color: #55C57A;
+    ```
+  </Step>
+  
+  <Step title="Use Semantic Names">
+    Choose variables based on their purpose, not appearance:
+    
+    ```scss
+    // ✅ Good
+    background-color: $color-primary;
+    
+    // ❌ Bad (color might change)
+    background-color: $color-green;
+    ```
+  </Step>
+  
+  <Step title="Leverage Color Functions">
+    Use SASS functions for variations instead of creating new variables:
+    
+    ```scss
+    // ✅ Good
+    border-color: rgba($color-primary, 0.3);
+    
+    // ❌ Bad (unnecessary variable)
+    border-color: $color-primary-transparent;
+    ```
+  </Step>
+</Steps>
+
+<Tip>
+  When adding new features, stick to the existing color palette. Only add new color variables if absolutely necessary for the design system.
+</Tip>

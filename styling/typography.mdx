@@ -1,0 +1,440 @@
+---
+title: 'Typography'
+description: 'Typography system and text styles in Natours'
+icon: 'font'
+---
+
+## Overview
+
+Natours implements a clean, hierarchical typography system using the Lato font family. All typography styles are defined in `sass/base/_typography.scss` and follow a consistent scale for headings, body text, and special text elements.
+
+## Font Family
+
+The entire application uses the Lato font family from Google Fonts:
+
+```scss sass/base/_typography.scss
+body {
+  font-family: 'Lato', sans-serif;
+  font-weight: 400;
+  line-height: 1.7;
+  color: $color-grey-dark-1;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+```
+
+<Note>
+  Lato is a humanist sans-serif font that provides excellent readability and works well for both headings and body text. It's optimized for outdoor and adventure-themed designs.
+</Note>
+
+### Font Weights
+
+Natours primarily uses two font weights:
+
+- **400 (Regular)**: Body text, paragraphs, and most headings
+- **700 (Bold)**: Secondary headings and emphasis
+
+## Heading Styles
+
+### Primary Heading
+
+The hero heading style used in the main header section with dramatic animations.
+
+```scss sass/base/_typography.scss
+.heading-primary {
+  color: $color-white;
+  text-transform: uppercase;
+  backface-visibility: hidden;
+  margin-bottom: 6rem;
+  
+  &--main {
+    display: block;
+    font-size: 6rem;
+    font-weight: 400;
+    letter-spacing: 3.5rem;
+    animation: moveInLeft 1s ease;
+  }
+  
+  &--sub {
+    display: block;
+    font-size: 2rem;
+    font-weight: 400;
+    letter-spacing: 1.75rem;
+    animation: moveInRight 1s ease;
+  }
+}
+```
+
+<CardGroup cols={2}>
+  <Card title="Main Heading" icon="h1">
+    **Font Size:** 6rem (60px)
+    
+    **Letter Spacing:** 3.5rem
+    
+    **Animation:** moveInLeft
+    
+    Used for the primary hero text
+  </Card>
+  
+  <Card title="Sub Heading" icon="heading">
+    **Font Size:** 2rem (20px)
+    
+    **Letter Spacing:** 1.75rem
+    
+    **Animation:** moveInRight
+    
+    Used for the hero subtitle
+  </Card>
+</CardGroup>
+
+**HTML Structure:**
+
+```html
+<h1 class="heading-primary">
+  <span class="heading-primary--main">Outdoors</span>
+  <span class="heading-primary--sub">is where life happens</span>
+</h1>
+```
+
+<Tip>
+  The `backface-visibility: hidden` property prevents flickering during animations and ensures smooth rendering.
+</Tip>
+
+### Secondary Heading
+
+Section headings with an eye-catching gradient text effect and interactive hover state.
+
+```scss sass/base/_typography.scss
+.heading-secondary {
+  font-size: 3.5rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  display: inline-block;
+  background-image: linear-gradient(to right, $color-primary-light, $color-primary-dark);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: 2px;
+  transition: all .2s ease;
+
+  &:hover {
+    transform: skewY(2deg) skewX(15deg) scale(1.1);
+    text-shadow: .5rem 1rem 2rem rgba($color-black, .2);
+  }
+}
+```
+
+**Key Features:**
+
+<Steps>
+  <Step title="Gradient Text">
+    Uses `background-clip: text` to apply a gradient as the text color:
+    
+    ```scss
+    background-image: linear-gradient(to right, $color-primary-light, $color-primary-dark);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    ```
+  </Step>
+  
+  <Step title="Interactive Hover">
+    Applies a playful 3D skew effect on hover:
+    
+    ```scss
+    transform: skewY(2deg) skewX(15deg) scale(1.1);
+    text-shadow: .5rem 1rem 2rem rgba($color-black, .2);
+    ```
+  </Step>
+</Steps>
+
+**Usage Example:**
+
+```html
+<h2 class="heading-secondary">
+  Exciting tours for adventurous people
+</h2>
+```
+
+<Warning>
+  The `-webkit-background-clip: text` property requires the `-webkit-` prefix for Safari support. Always include both the prefixed and unprefixed versions.
+</Warning>
+
+### Tertiary Heading
+
+Smaller section headings and component titles.
+
+```scss sass/base/_typography.scss
+.heading-tertiary {
+  font-size: $default-font-size;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+```
+
+**Properties:**
+
+- **Font Size:** 1.6rem (16px) - matches default font size
+- **Font Weight:** 700 (Bold)
+- **Transform:** Uppercase for emphasis
+
+**Usage Example:**
+
+```html
+<h3 class="heading-tertiary u-margin-bottom-small">
+  Experience adventure like never before
+</h3>
+```
+
+## Body Text
+
+### Paragraph Style
+
+Standard paragraph styling with automatic bottom margin.
+
+```scss sass/base/_typography.scss
+.paragraph {
+  font-size: $default-font-size;
+
+  &:not(:last-child) {
+    margin-bottom: 3rem;
+  }
+}
+```
+
+<Note>
+  The `:not(:last-child)` selector automatically removes bottom margin from the last paragraph in a container, preventing extra whitespace.
+</Note>
+
+**Usage Example:**
+
+```html
+<p class="paragraph">
+  Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+  Aperiam, ipsum sapiente aspernatur.
+</p>
+<p class="paragraph">
+  Lorem ipsum dolor sit amet consectetur adipisicing elit.
+</p>
+```
+
+## Typography Scale
+
+Natours uses a consistent type scale based on the 1.6rem default:
+
+<Tabs>
+  <Tab title="Headings">
+    | Level | Class | Size | Weight |
+    |-------|-------|------|--------|
+    | H1 Main | `.heading-primary--main` | 6rem (60px) | 400 |
+    | H1 Sub | `.heading-primary--sub` | 2rem (20px) | 400 |
+    | H2 | `.heading-secondary` | 3.5rem (35px) | 700 |
+    | H3 | `.heading-tertiary` | 1.6rem (16px) | 700 |
+  </Tab>
+  
+  <Tab title="Body Text">
+    | Element | Class | Size | Weight |
+    |---------|-------|------|--------|
+    | Body | `body` | 1.6rem (16px) | 400 |
+    | Paragraph | `.paragraph` | 1.6rem (16px) | 400 |
+    | Button | `.btn` | 1.6rem (16px) | - |
+  </Tab>
+</Tabs>
+
+## Text Styling Techniques
+
+### Letter Spacing
+
+Natours uses generous letter spacing for uppercase headings:
+
+```scss
+// Large spacing for hero text
+letter-spacing: 3.5rem;
+
+// Medium spacing for section headings
+letter-spacing: 2px;
+
+// Small spacing for subheadings
+letter-spacing: 1.75rem;
+```
+
+<Tip>
+  Large letter spacing in uppercase text creates a modern, spacious feel perfect for the outdoor adventure theme.
+</Tip>
+
+### Text Transform
+
+All headings use uppercase transformation for consistency:
+
+```scss
+text-transform: uppercase;
+```
+
+This is applied through CSS rather than using uppercase in HTML, making content more maintainable and accessible.
+
+### Line Height
+
+Body text uses a comfortable line height for readability:
+
+```scss
+line-height: 1.7;
+```
+
+This 1.7 ratio provides excellent readability for longer-form content.
+
+## Special Typography Effects
+
+### Gradient Text Effect
+
+The secondary heading uses a sophisticated gradient text technique:
+
+<Steps>
+  <Step title="Create Gradient Background">
+    ```scss
+    background-image: linear-gradient(
+      to right, 
+      $color-primary-light, 
+      $color-primary-dark
+    );
+    ```
+  </Step>
+  
+  <Step title="Clip Background to Text">
+    ```scss
+    -webkit-background-clip: text;
+    background-clip: text;
+    ```
+  </Step>
+  
+  <Step title="Make Text Transparent">
+    ```scss
+    color: transparent;
+    ```
+  </Step>
+  
+  <Step title="Set Display Mode">
+    ```scss
+    display: inline-block;
+    ```
+    Required for the background-clip effect to work properly
+  </Step>
+</Steps>
+
+### Animated Text Entrance
+
+Headings use entrance animations for dramatic effect:
+
+```scss
+.heading-primary--main {
+  animation: moveInLeft 1s ease;
+}
+
+.heading-primary--sub {
+  animation: moveInRight 1s ease;
+}
+```
+
+See the [Animations](/styling/animations) page for more details on these effects.
+
+### Hover Effects
+
+The secondary heading includes an interactive hover state:
+
+```scss
+&:hover {
+  transform: skewY(2deg) skewX(15deg) scale(1.1);
+  text-shadow: .5rem 1rem 2rem rgba($color-black, .2);
+}
+```
+
+This creates a playful 3D effect that engages users and adds personality to the design.
+
+## Color Usage
+
+Typography colors follow the project's color system:
+
+<CardGroup cols={3}>
+  <Card title="Primary Headings" icon="heading">
+    `$color-white`
+    
+    Used on hero headings over dark backgrounds
+  </Card>
+  
+  <Card title="Secondary Headings" icon="heading">
+    Gradient
+    
+    Primary light to primary dark gradient
+  </Card>
+  
+  <Card title="Body Text" icon="paragraph">
+    `$color-grey-dark-1`
+    
+    Used for all body copy and paragraphs
+  </Card>
+</CardGroup>
+
+## Responsive Typography
+
+While not shown in the base typography file, Natours uses media queries to adjust font sizes for different screen sizes:
+
+```scss
+// Example responsive pattern
+.heading-primary--main {
+  font-size: 6rem;
+  
+  @media (max-width: 37.5em) {
+    font-size: 4rem;
+    letter-spacing: 1rem;
+  }
+}
+```
+
+<Note>
+  Font sizes use `rem` units which scale relative to the root font size, making responsive adjustments easier to manage.
+</Note>
+
+## Best Practices
+
+<Steps>
+  <Step title="Use Semantic HTML">
+    Always use proper heading hierarchy (`<h1>`, `<h2>`, `<h3>`) even when applying style classes:
+    
+    ```html
+    <!-- ✅ Good -->
+    <h2 class="heading-secondary">Section Title</h2>
+    
+    <!-- ❌ Bad -->
+    <div class="heading-secondary">Section Title</div>
+    ```
+  </Step>
+  
+  <Step title="Combine with Utility Classes">
+    Use utility classes for spacing adjustments:
+    
+    ```html
+    <h3 class="heading-tertiary u-margin-bottom-small">
+      Component Title
+    </h3>
+    ```
+  </Step>
+  
+  <Step title="Maintain Consistency">
+    Stick to the defined heading classes rather than creating custom styles:
+    
+    ```scss
+    // ✅ Good
+    <h2 class="heading-secondary">Title</h2>
+    
+    // ❌ Bad
+    <h2 style="font-size: 3.5rem;">Title</h2>
+    ```
+  </Step>
+  
+  <Step title="Consider Accessibility">
+    Ensure sufficient color contrast and readable font sizes for all users.
+  </Step>
+</Steps>
+
+<Warning>
+  Never skip heading levels in your HTML structure. Go from `<h1>` to `<h2>` to `<h3>` in order for proper document structure and accessibility.
+</Warning>

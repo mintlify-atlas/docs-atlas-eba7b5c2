@@ -1,0 +1,407 @@
+---
+title: 'Sass Mixins'
+description: 'Reusable style patterns with Sass mixins in Natours'
+icon: 'function'
+---
+
+# Sass Mixins
+
+Mixins are one of the most powerful features in Sass, allowing you to create reusable chunks of CSS code. Natours uses three essential mixins that solve common layout and responsive design challenges.
+
+## Overview
+
+All mixins are defined in `sass/abstracts/_mixins.scss` and can be imported using Sass's `@use` directive:
+
+```scss
+@use "../abstracts/mixins" as *;
+```
+
+<Note>
+Mixins are compiled into standard CSS at build time, so there's no runtime performance cost.
+</Note>
+
+---
+
+## Clearfix Mixin
+
+The `clearfix` mixin solves the classic "float collapse" problem where parent containers don't properly contain their floated children.
+
+### Source Code
+
+```scss sass/abstracts/_mixins.scss
+@mixin clearfix {
+  &::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+```
+
+### How It Works
+
+<Steps>
+  <Step title="Creates a pseudo-element">
+    The `::after` pseudo-element is inserted at the end of the container
+  </Step>
+  
+  <Step title="Displays as table">
+    `display: table` creates a block formatting context
+  </Step>
+  
+  <Step title="Clears floats">
+    `clear: both` ensures the pseudo-element appears below all floated elements
+  </Step>
+</Steps>
+
+### Real-World Usage
+
+The clearfix mixin is used in the grid system to ensure rows properly contain their floated columns:
+
+```scss sass/components/layout/_grid.scss
+.row {
+  max-width: $grid-width;
+  margin: 0 auto;
+  
+  &:not(:last-child) {
+    margin-bottom: $gutter-vertical;
+  }
+
+  @include clearfix;
+
+  [class^="col-"] {
+    float: left;
+  
+    &:not(:last-child) {
+      margin-right: $gutter-horizontal;
+    }
+  }
+}
+```
+
+<Tip>
+Without clearfix, the `.row` element would collapse to zero height since all its children are floated.
+</Tip>
+
+### When to Use
+
+- Container elements with floated children
+- Legacy grid systems using float-based layouts
+- Situations where flexbox or grid aren't appropriate
+
+<Warning>
+Modern layouts using Flexbox or CSS Grid don't need clearfix. Use it only for float-based layouts.
+</Warning>
+
+---
+
+## Absolute Center Mixin
+
+The `absCenter` mixin perfectly centers an element both horizontally and vertically within its positioned parent.
+
+### Source Code
+
+```scss sass/abstracts/_mixins.scss
+@mixin absCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+```
+
+### How It Works
+
+<Steps>
+  <Step title="Position absolutely">
+    Removes the element from normal document flow
+  </Step>
+  
+  <Step title="Move to center point">
+    `top: 50%` and `left: 50%` position the element's top-left corner at the parent's center
+  </Step>
+  
+  <Step title="Offset by half the element's size">
+    `translate(-50%, -50%)` shifts the element back by half its own width and height
+  </Step>
+</Steps>
+
+### Real-World Usage
+
+The mixin is used extensively throughout the project for centering content:
+
+<CodeGroup>
+```scss Card Component
+// sass/components/_card.scss
+.card {
+  &__cta {
+    width: 90%;
+    text-align: center;
+    
+    @include absCenter;
+  }
+}
+```
+
+```scss Form Component
+// sass/components/_form.scss
+.form {
+  &__radio-label {
+    &::before {
+      // Radio button indicator
+      @include absCenter;
+    }
+  }
+}
+```
+
+```scss Popup Component
+// sass/components/_popup.scss
+.popup {
+  &__content {
+    @include absCenter;
+    width: 75%;
+    background-color: $color-white;
+  }
+}
+```
+</CodeGroup>
+
+### When to Use
+
+- Modal dialogs and popups
+- Overlay content on images or videos
+- Call-to-action sections within cards
+- Icon centering within circular containers
+
+<Note>
+The parent element must have `position: relative`, `position: absolute`, or `position: fixed` for this to work.
+</Note>
+
+### Visual Example
+
+In the card component, the call-to-action section is perfectly centered on the back side of the flipping card:
+
+```scss
+.card {
+  perspective: 150rem;
+  position: relative;  // Parent is positioned
+  height: 50rem;
+  
+  &__cta {
+    width: 90%;
+    text-align: center;
+    @include absCenter;  // Child is centered
+  }
+}
+```
+
+---
+
+## Respond Mixin
+
+The `respond` mixin is Natours' responsive design solution, providing a consistent interface for media queries across the entire project.
+
+### Source Code
+
+```scss sass/abstracts/_mixins.scss
+// MEDIA QUERY MANAGER
+/* 
+0      - 600px:     Phone
+600px  - 900px:     Tablet portrait
+900px  - 1200px:    Tablet landscape
+1200px - 1800px:    is where our normal styles apply
+1800px - > :        Big desktop
+
+$breakpoint argument choices:
+- phone
+- tab-port
+- tab-land
+- big-desktop
+*/
+@mixin respond($breakpoint) {
+  @if $breakpoint == phone {
+    @media (max-width: 37.5em) { @content };      //600px
+  }
+  @if $breakpoint == tab-port {
+    @media (max-width: 56.25em) { @content };     //900px
+  }
+  @if $breakpoint == tab-land {
+    @media (max-width: 75em) { @content };        //1200px
+  }
+  @if $breakpoint == big-desktop {
+    @media (min-width: 112.5em) { @content };     //1800px
+  }
+}
+```
+
+### Breakpoint System
+
+<CardGroup cols={2}>
+  <Card title="phone" icon="mobile">
+    **0 - 600px**
+    
+    `max-width: 37.5em`
+    
+    Mobile devices in portrait mode
+  </Card>
+  
+  <Card title="tab-port" icon="tablet">
+    **600px - 900px**
+    
+    `max-width: 56.25em`
+    
+    Tablets in portrait orientation
+  </Card>
+  
+  <Card title="tab-land" icon="tablet-screen-button">
+    **900px - 1200px**
+    
+    `max-width: 75em`
+    
+    Tablets in landscape orientation
+  </Card>
+  
+  <Card title="big-desktop" icon="desktop">
+    **1800px+**
+    
+    `min-width: 112.5em`
+    
+    Large desktop monitors
+  </Card>
+</CardGroup>
+
+<Note>
+The default styles (1200px - 1800px) don't need a media query - they're the base case.
+</Note>
+
+### Why Em Units?
+
+Media queries use `em` units instead of `px` for better browser compatibility:
+
+- `1em = 16px` (browser default)
+- `37.5em × 16 = 600px`
+- `56.25em × 16 = 900px`
+- `75em × 16 = 1200px`
+- `112.5em × 16 = 1800px`
+
+<Tip>
+Em units in media queries respect user font size preferences, making the site more accessible.
+</Tip>
+
+### Real-World Usage
+
+The respond mixin implements a **mobile-first** strategy by adjusting the base font size:
+
+```scss sass/base/_base.scss
+html {
+  font-size: 62.5%;  // 10px base (62.5% of 16px)
+  scroll-behavior: smooth;
+
+  @include respond(tab-land) {
+    font-size: 56.25%;  // 9px (tablet landscape)
+  }
+  
+  @include respond(tab-port) {
+    font-size: 50%;  // 8px (tablet portrait)
+  }
+
+  @include respond(big-desktop) {
+    font-size: 75%;  // 12px (large screens)
+  }
+}
+```
+
+### How Font Scaling Works
+
+<Steps>
+  <Step title="Base is 62.5%">
+    On desktop (1200-1800px), `1rem = 10px` (62.5% of 16px)
+  </Step>
+  
+  <Step title="Scales down for smaller screens">
+    On tablets, font size reduces to 56.25% (9px) and 50% (8px)
+  </Step>
+  
+  <Step title="Scales up for large screens">
+    On big desktops (1800px+), font size increases to 75% (12px)
+  </Step>
+  
+  <Step title="All rem values scale automatically">
+    Since spacing, padding, and sizes use rem, everything scales proportionally
+  </Step>
+</Steps>
+
+### Usage Pattern
+
+```scss
+.element {
+  // Default styles (1200px - 1800px)
+  font-size: 2rem;
+  padding: 3rem;
+  
+  @include respond(tab-land) {
+    // Tablet landscape adjustments
+    padding: 2rem;
+  }
+  
+  @include respond(tab-port) {
+    // Tablet portrait adjustments
+    font-size: 1.8rem;
+  }
+  
+  @include respond(phone) {
+    // Mobile adjustments
+    padding: 1.5rem;
+  }
+}
+```
+
+### When to Use Each Breakpoint
+
+| Breakpoint | Use Case | Example |
+|------------|----------|----------|
+| `phone` | Stack columns, hide decorative elements | Navigation becomes hamburger menu |
+| `tab-port` | Reduce spacing, adjust grid columns | 3-column grid becomes 2-column |
+| `tab-land` | Minor spacing adjustments | Slightly reduce padding |
+| `big-desktop` | Increase font sizes, add spacing | Make content more readable on large monitors |
+
+<Warning>
+Always order media queries from largest to smallest (desktop-first) or smallest to largest (mobile-first). Natours uses desktop-first, so `tab-land` comes before `tab-port`.
+</Warning>
+
+---
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Keep mixins simple" icon="wand-magic-sparkles">
+    Each mixin should solve one specific problem
+  </Card>
+  
+  <Card title="Use semantic names" icon="tag">
+    `absCenter` is clearer than `centerHelper`
+  </Card>
+  
+  <Card title="Document parameters" icon="book">
+    Include comments explaining what arguments do
+  </Card>
+  
+  <Card title="Import once" icon="file-import">
+    Use `@use` instead of `@import` to avoid duplication
+  </Card>
+</CardGroup>
+
+---
+
+## Related Topics
+
+<CardGroup cols={2}>
+  <Card title="Media Queries" icon="mobile-screen" href="/advanced/media-queries">
+    Deep dive into the responsive design system
+  </Card>
+  
+  <Card title="Variables" icon="dollar-sign" href="/styling/colors-variables">
+    Learn about Sass variables and the color system
+  </Card>
+</CardGroup>

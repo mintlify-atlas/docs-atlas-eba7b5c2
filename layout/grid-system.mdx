@@ -1,0 +1,446 @@
+---
+title: 'Grid System'
+description: 'Learn how to use the custom float-based grid system in Natours for responsive layouts'
+---
+
+## Overview
+
+Natours uses a custom-built, float-based grid system that provides a flexible foundation for creating responsive layouts. The grid system is built with Sass and uses precise calculations to handle column widths and gutters.
+
+<Note>
+The grid system is defined in `sass/components/layout/_grid.scss` and uses variables from `sass/abstracts/_variables.scss` for configuration.
+</Note>
+
+## Grid Configuration
+
+The grid system is configured using three main variables:
+
+```scss
+// GRID
+$grid-width: 114rem;        // Maximum width of the row container
+$gutter-vertical: 8rem;     // Vertical spacing between rows
+$gutter-horizontal: 6rem;   // Horizontal spacing between columns
+```
+
+### Variables Explanation
+
+<CardGroup cols={3}>
+  <Card title="$grid-width" icon="ruler-horizontal">
+    Sets the maximum width of the `.row` container to `114rem` (1140px), ensuring content stays centered and doesn't span too wide on large screens.
+  </Card>
+  <Card title="$gutter-vertical" icon="arrows-up-down">
+    Provides `8rem` (80px) of vertical spacing between consecutive rows, creating comfortable breathing room between content sections.
+  </Card>
+  <Card title="$gutter-horizontal" icon="arrows-left-right">
+    Adds `6rem` (60px) of horizontal spacing between columns, preventing content from appearing cramped.
+  </Card>
+</CardGroup>
+
+## The Row Container
+
+All columns must be wrapped in a `.row` container. The row handles centering, vertical spacing, and float clearing:
+
+```scss
+.row {
+  max-width: $grid-width;
+  margin: 0 auto;
+  
+  &:not(:last-child) {
+    margin-bottom: $gutter-vertical;
+  }
+
+  @include clearfix;
+}
+```
+
+### Row Features
+
+- **Centered**: Uses `margin: 0 auto` to center the row horizontally
+- **Max Width**: Constrains content to the defined grid width
+- **Vertical Spacing**: Automatically adds bottom margin to all rows except the last one
+- **Float Clearing**: Uses the clearfix mixin to contain floated columns
+
+## Column Classes
+
+The grid system provides a variety of column classes for creating different layouts. All columns float left and include horizontal gutters.
+
+### Base Column Behavior
+
+```scss
+[class^="col-"] {
+  float: left;
+
+  &:not(:last-child) {
+    margin-right: $gutter-horizontal;
+  }
+}
+```
+
+<Tip>
+The attribute selector `[class^="col-"]` targets all elements with classes starting with "col-", ensuring consistent behavior across all column types.
+</Tip>
+
+### Two-Column Layout
+
+```scss
+.col-1-of-2 {
+  width: calc((100% - #{$gutter-horizontal}) / 2);
+}
+```
+
+Creates two equal columns, each taking up half the available width minus the gutter:
+
+```html
+<div class="row">
+  <div class="col-1-of-2">
+    <!-- First column content -->
+  </div>
+  <div class="col-1-of-2">
+    <!-- Second column content -->
+  </div>
+</div>
+```
+
+### Three-Column Layout
+
+```scss
+.col-1-of-3 {
+  width: calc((100% - 2 * #{$gutter-horizontal}) / 3);
+}
+
+.col-2-of-3 {
+  width: calc(2 * ((100% - 2 * #{$gutter-horizontal}) / 3) + #{$gutter-horizontal});
+}
+```
+
+<Steps>
+  <Step title="Equal Three Columns">
+    Use `.col-1-of-3` three times for equal-width columns:
+    
+    ```html
+    <div class="row">
+      <div class="col-1-of-3">Column 1</div>
+      <div class="col-1-of-3">Column 2</div>
+      <div class="col-1-of-3">Column 3</div>
+    </div>
+    ```
+  </Step>
+  
+  <Step title="Unequal Three Columns">
+    Combine `.col-1-of-3` and `.col-2-of-3` for asymmetric layouts:
+    
+    ```html
+    <div class="row">
+      <div class="col-1-of-3">Sidebar</div>
+      <div class="col-2-of-3">Main content</div>
+    </div>
+    ```
+  </Step>
+</Steps>
+
+### Four-Column Layout
+
+```scss
+.col-1-of-4 {
+  width: calc((100% - 3 * #{$gutter-horizontal}) / 4);
+}
+
+.col-2-of-4 {
+  width: calc(2 * ((100% - 3 * #{$gutter-horizontal}) / 4) + #{$gutter-horizontal});
+}
+
+.col-3-of-4 {
+  width: calc(3 * ((100% - 3 * #{$gutter-horizontal}) / 4) + 2 * #{$gutter-horizontal});
+}
+```
+
+## Real-World Examples
+
+Here are actual examples from the Natours website:
+
+### About Section (2-Column Layout)
+
+```html
+<section class="section-about" id="section-about">
+  <div class="u-center-text u-margin-bottom-big">
+    <h2 class="heading-secondary">
+      Exciting tours for adventurous people
+    </h2>
+  </div>
+
+  <div class="row">
+    <div class="col-1-of-2">
+      <h3 class="heading-tertiary u-margin-bottom-small">
+        You're going to fall in love with nature
+      </h3>
+      <p class="paragraph">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit...
+      </p>
+      
+      <h3 class="heading-tertiary u-margin-bottom-small">
+        Live adventures like you never have before
+      </h3>
+      <p class="paragraph">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit...
+      </p>
+
+      <a href="#" class="btn-text">Learn more &rarr;</a>
+    </div>
+    <div class="col-1-of-2">
+      <div class="composition">
+        <img src="img/nat-1.jpg" alt="Nature 1" class="composition__photo composition__photo--p1" />
+        <img src="img/nat-2.jpg" alt="Nature 2" class="composition__photo composition__photo--p2" />
+        <img src="img/nat-3.jpg" alt="Nature 3" class="composition__photo composition__photo--p3" />
+      </div>
+    </div>
+  </div>
+</section>
+```
+
+### Features Section (4-Column Layout)
+
+```html
+<section class="section-features" id="section-features">
+  <div class="row">
+    <div class="col-1-of-4">
+      <div class="feature-box">
+        <i class="feature-box__icon icon-basic-world"></i>
+        <h3 class="heading-tertiary u-margin-bottom-small">Explore the world</h3>
+        <p class="feature-box__text">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit.
+        </p>
+      </div>
+    </div>
+    <div class="col-1-of-4">
+      <div class="feature-box">
+        <i class="feature-box__icon icon-basic-compass"></i>
+        <h3 class="heading-tertiary u-margin-bottom-small">Meet nature</h3>
+        <p class="feature-box__text">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit.
+        </p>
+      </div>
+    </div>
+    <div class="col-1-of-4">
+      <div class="feature-box">
+        <i class="feature-box__icon icon-basic-map"></i>
+        <h3 class="heading-tertiary u-margin-bottom-small">Find your way</h3>
+        <p class="feature-box__text">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit.
+        </p>
+      </div>
+    </div>
+    <div class="col-1-of-4">
+      <div class="feature-box">
+        <i class="feature-box__icon icon-basic-heart"></i>
+        <h3 class="heading-tertiary u-margin-bottom-small">Live a healthier life</h3>
+        <p class="feature-box__text">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+```
+
+### Tours Section (3-Column Layout)
+
+```html
+<section class="section-tours" id="section-tours">
+  <div class="u-center-text u-margin-bottom-big">
+    <h2 class="heading-secondary">Most popular tours</h2>
+  </div>
+
+  <div class="row u-margin-bottom-big">
+    <div class="col-1-of-3">
+      <div class="card">
+        <!-- Card content -->
+      </div>
+    </div>
+    <div class="col-1-of-3">
+      <div class="card">
+        <!-- Card content -->
+      </div>
+    </div>
+    <div class="col-1-of-3">
+      <div class="card">
+        <!-- Card content -->
+      </div>
+    </div>
+  </div>
+</section>
+```
+
+### Footer (2-Column Layout)
+
+```html
+<footer class="footer">
+  <div class="footer__logo-box">
+    <img src="img/logo-green-2x.png" alt="Full logo" class="footer__logo" />
+  </div>
+
+  <div class="row">
+    <div class="col-1-of-2">
+      <div class="footer__navigation">
+        <ul class="footer__list">
+          <li class="footer__item"><a href="#" class="footer__link">Company</a></li>
+          <li class="footer__item"><a href="#" class="footer__link">Contact us</a></li>
+          <li class="footer__item"><a href="#" class="footer__link">Careers</a></li>
+          <li class="footer__item"><a href="#" class="footer__link">Privacy policy</a></li>
+          <li class="footer__item"><a href="#" class="footer__link">Terms</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-1-of-2">
+      <p class="footer__copyright">
+        Built by Marcos Laurindo Ferreira for his online course...
+      </p>
+    </div>
+  </div>
+</footer>
+```
+
+## The Clearfix Mixin
+
+The grid system relies on the clearfix mixin to properly contain floated columns:
+
+```scss
+@mixin clearfix {
+  &::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+```
+
+This mixin is applied to the `.row` class and ensures that parent containers properly wrap around their floated children.
+
+<Warning>
+Without the clearfix, the row container would collapse to zero height since all its children are floated out of the normal document flow.
+</Warning>
+
+## Width Calculation Formula
+
+The width calculations follow a consistent pattern:
+
+### Single Column
+
+```scss
+width: calc((100% - (n-1) * gutter) / n)
+```
+
+Where `n` is the total number of columns.
+
+### Multiple Columns
+
+```scss
+width: calc(m * ((100% - (n-1) * gutter) / n) + (m-1) * gutter)
+```
+
+Where:
+- `n` = total number of columns
+- `m` = number of columns to span
+
+### Examples
+
+<CodeGroup>
+```scss 1 of 2 columns
+.col-1-of-2 {
+  width: calc((100% - #{$gutter-horizontal}) / 2);
+}
+// Result: ~47% width per column
+```
+
+```scss 1 of 3 columns
+.col-1-of-3 {
+  width: calc((100% - 2 * #{$gutter-horizontal}) / 3);
+}
+// Result: ~31.33% width per column
+```
+
+```scss 2 of 3 columns
+.col-2-of-3 {
+  width: calc(
+    2 * ((100% - 2 * #{$gutter-horizontal}) / 3) + #{$gutter-horizontal}
+  );
+}
+// Result: ~68.66% width (two columns + one gutter)
+```
+
+```scss 1 of 4 columns
+.col-1-of-4 {
+  width: calc((100% - 3 * #{$gutter-horizontal}) / 4);
+}
+// Result: ~22.5% width per column
+```
+</CodeGroup>
+
+## Available Column Classes
+
+Here's a complete reference of all available column classes:
+
+| Class | Description | Width Calculation |
+|-------|-------------|------------------|
+| `.col-1-of-2` | Half width | 50% minus gutters |
+| `.col-1-of-3` | One-third width | 33.33% minus gutters |
+| `.col-2-of-3` | Two-thirds width | 66.66% minus gutters |
+| `.col-1-of-4` | Quarter width | 25% minus gutters |
+| `.col-2-of-4` | Half width | 50% minus gutters |
+| `.col-3-of-4` | Three-quarters width | 75% minus gutters |
+
+<Note>
+`.col-2-of-4` is functionally equivalent to `.col-1-of-2`, both creating a 50% width column.
+</Note>
+
+## Best Practices
+
+<Steps>
+  <Step title="Always Use Row Containers">
+    Never use column classes without wrapping them in a `.row` container. The row provides essential centering and clearfix functionality.
+  </Step>
+  
+  <Step title="Ensure Columns Add Up">
+    Make sure the fractions of your columns add up to 1 (e.g., `1/3 + 2/3 = 1` or `1/4 + 1/4 + 1/4 + 1/4 = 1`).
+  </Step>
+  
+  <Step title="Use Consistent Column Systems">
+    Stick to one column system per row. Don't mix `.col-1-of-3` with `.col-1-of-4` in the same row.
+  </Step>
+  
+  <Step title="Consider Responsive Design">
+    The float-based grid system works on all screen sizes, but consider adding media queries for mobile devices where stacked columns may be more appropriate.
+  </Step>
+</Steps>
+
+## Responsive Considerations
+
+<Tip>
+For responsive layouts on smaller screens, you may want to add media query overrides that make columns stack vertically:
+
+```scss
+@media (max-width: 768px) {
+  [class^="col-"] {
+    width: 100% !important;
+    margin-right: 0 !important;
+    margin-bottom: 2rem;
+  }
+}
+```
+</Tip>
+
+## Comparison with Modern Grid Systems
+
+While Natours uses a float-based grid system, modern alternatives include:
+
+- **CSS Grid**: Native browser support for two-dimensional layouts
+- **Flexbox**: One-dimensional flexible box layouts
+- **Bootstrap Grid**: Popular framework with extensive grid utilities
+
+The float-based approach provides:
+- ✅ Excellent browser compatibility (including older browsers)
+- ✅ Predictable behavior and easy debugging
+- ✅ Simple mental model for developers
+- ❌ Requires clearfix hacks
+- ❌ Less flexible than modern alternatives
+- ❌ More verbose HTML structure

@@ -1,0 +1,284 @@
+---
+title: 'Animations'
+description: 'Keyframe animations and motion design in Natours'
+icon: 'wand-magic-sparkles'
+---
+
+## Overview
+
+Natours uses CSS keyframe animations to create smooth, engaging entrance effects. All animations are defined in `sass/base/_animations.scss` and utilize GPU-accelerated transforms for optimal performance.
+
+<Note>
+  All animations use `transform` and `opacity` properties exclusively to ensure hardware acceleration and smooth 60fps performance.
+</Note>
+
+## Keyframe Animations
+
+The project includes three primary keyframe animations for element entrance effects:
+
+### moveInLeft
+
+Animates elements entering from the left side of the screen with a subtle bounce effect.
+
+```scss sass/base/_animations.scss
+@keyframes moveInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+
+  80% {
+    transform: translateX(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+```
+
+<Steps>
+  <Step title="Start State (0%)">
+    Element is invisible (`opacity: 0`) and positioned 100px to the left
+  </Step>
+  
+  <Step title="Bounce Point (80%)">
+    Element overshoots slightly by 10px to the right, creating a natural bounce effect
+  </Step>
+  
+  <Step title="End State (100%)">
+    Element reaches final position with full opacity
+  </Step>
+</Steps>
+
+**Usage Example:**
+
+```scss sass/base/_typography.scss
+.heading-primary--main {
+  display: block;
+  font-size: 6rem;
+  font-weight: 400;
+  letter-spacing: 3.5rem;
+  animation: moveInLeft 1s ease;
+}
+```
+
+### moveInRight
+
+Mirror animation to `moveInLeft`, animating elements from the right side.
+
+```scss sass/base/_animations.scss
+@keyframes moveInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+
+  80% {
+    transform: translateX(-10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+```
+
+This animation follows the same bounce pattern as `moveInLeft` but in the opposite direction, creating visual balance when used with paired elements.
+
+**Usage Example:**
+
+```scss sass/base/_typography.scss
+.heading-primary--sub {
+  display: block;
+  font-size: 2rem;
+  font-weight: 400;
+  letter-spacing: 1.75rem;
+  animation: moveInRight 1s ease;
+}
+```
+
+### moveInBottom
+
+Animates elements entering from below, perfect for call-to-action buttons and secondary elements.
+
+```scss sass/base/_animations.scss
+@keyframes moveInBottom {
+  0% {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+```
+
+<Tip>
+  `moveInBottom` uses a simpler animation without the bounce effect, making it ideal for buttons and UI elements where subtlety is preferred.
+</Tip>
+
+**Usage Example:**
+
+```scss sass/components/_button.scss
+.btn--animated {
+  animation: moveInBottom .5s ease .75s;
+  animation-fill-mode: backwards;
+}
+```
+
+## Animation Properties
+
+### Duration and Timing
+
+<CardGroup cols={2}>
+  <Card title="Short Animations" icon="gauge-high">
+    Use 0.5s for buttons and small UI elements
+    
+    ```scss
+    animation: moveInBottom .5s ease;
+    ```
+  </Card>
+  
+  <Card title="Long Animations" icon="gauge">
+    Use 1s for large headings and hero elements
+    
+    ```scss
+    animation: moveInLeft 1s ease;
+    ```
+  </Card>
+</CardGroup>
+
+### Animation Delay
+
+Create staggered entrance effects by adding delays:
+
+```scss
+animation: moveInBottom .5s ease .75s;
+```
+
+This delays the button animation by 0.75s, allowing header text to animate in first.
+
+### Animation Fill Mode
+
+```scss
+animation-fill-mode: backwards;
+```
+
+<Note>
+  `animation-fill-mode: backwards` ensures that elements start with the styles defined at 0% of the keyframe, even during the delay period. This prevents a flash of unstyled content before the animation begins.
+</Note>
+
+## Real-World Examples
+
+### Hero Header Animation
+
+The header combines multiple animations to create a coordinated entrance:
+
+```html
+<h1 class="heading-primary">
+  <span class="heading-primary--main">Outdoors</span>
+  <span class="heading-primary--sub">is where life happens</span>
+</h1>
+<a href="#section-tours" class="btn btn--white btn--animated">Discover our tours</a>
+```
+
+**Animation Timeline:**
+
+<Steps>
+  <Step title="0s - Main Heading">
+    "Outdoors" animates in from the left (1s duration)
+  </Step>
+  
+  <Step title="0s - Subheading">
+    "is where life happens" animates in from the right (1s duration)
+  </Step>
+  
+  <Step title="0.75s - Button">
+    Button begins animating from bottom after 0.75s delay (0.5s duration)
+  </Step>
+  
+  <Step title="1.25s - Complete">
+    All animations complete, hero is fully visible
+  </Step>
+</Steps>
+
+## Performance Considerations
+
+<Warning>
+  Always use `backface-visibility: hidden` on animated elements to prevent flickering during animations:
+  
+  ```scss
+  .heading-primary {
+    backface-visibility: hidden;
+  }
+  ```
+</Warning>
+
+### GPU Acceleration
+
+All Natours animations use transform properties which are GPU-accelerated:
+
+- ✅ `transform: translateX()`
+- ✅ `transform: translateY()`
+- ✅ `opacity`
+- ❌ `left`, `right`, `top`, `bottom`
+- ❌ `width`, `height`
+
+<Tip>
+  Stick to `transform` and `opacity` for animations to ensure smooth 60fps performance across all devices.
+</Tip>
+
+## Animation Timing Functions
+
+All animations use the `ease` timing function for natural, organic motion:
+
+```scss
+animation: moveInLeft 1s ease;
+```
+
+The `ease` function provides:
+- Slow start
+- Fast middle
+- Slow end
+
+This creates more natural-feeling animations compared to `linear` timing.
+
+## Customizing Animations
+
+To create custom variations:
+
+```scss
+// Faster entrance from left
+.custom-element {
+  animation: moveInLeft 0.6s ease-out;
+}
+
+// Delayed entrance from bottom
+.delayed-element {
+  animation: moveInBottom 0.8s ease 1.5s;
+  animation-fill-mode: backwards;
+}
+
+// Subtle entrance from right
+.subtle-element {
+  animation: moveInRight 1.2s ease-in-out;
+}
+```
+
+## Browser Compatibility
+
+All animations are compatible with modern browsers. No vendor prefixes are required for:
+
+- Chrome 43+
+- Firefox 16+
+- Safari 9+
+- Edge (all versions)
+
+<Note>
+  For older browser support, consider using Autoprefixer as part of your build process to automatically add vendor prefixes.
+</Note>
